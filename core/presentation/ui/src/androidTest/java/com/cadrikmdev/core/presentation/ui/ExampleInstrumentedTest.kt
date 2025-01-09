@@ -17,6 +17,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.specure.cere.presentation.ui.test", appContext.packageName)
+        assertEquals("com.cadrikmdev.cere.presentation.ui.test", appContext.packageName)
     }
 }

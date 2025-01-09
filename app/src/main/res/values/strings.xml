@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">cadrikmdev</string>
+    <string name="app_name">Bluetooth Intercom</string>
+    <string name="bluetooth_classic">Classic bluetooth</string>
+    <string name="bluetooth_le">Bluetooth Low Energy</string>
+    <string name="permissions">Permissions</string>
+    <string name="resolve_missing_permissions">Resolve</string>
 </resources>

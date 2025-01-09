@@ -11,6 +11,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.bundles.koin)
 
+    implementation(projects.core.domain)
     implementation(projects.intercom.domain)
     implementation(libs.androidx.core)
 }

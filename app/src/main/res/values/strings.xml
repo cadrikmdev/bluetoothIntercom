@@ -4,4 +4,6 @@
     <string name="bluetooth_le">Bluetooth Low Energy</string>
     <string name="permissions">Permissions</string>
     <string name="resolve_missing_permissions">Resolve</string>
+    <string name="client">Client</string>
+    <string name="server">Server</string>
 </resources>

@@ -40,6 +40,18 @@ private fun NavGraphBuilder.mainGraph(
             HomeScreenRoot(
                 onResolvePermissionClick = {
                     navController.navigate("permissions")
+                },
+                onBluetoothClassicClientClick = {
+
+                },
+                onBluetoothClassicServerClick = {
+
+                },
+                onBluetoothLeClientClick = {
+
+                },
+                onBluetoothLeServerClick = {
+
                 }
             )
         }

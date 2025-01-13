@@ -1,9 +1,7 @@
 package com.cadrikmdev.bluetoothintercom.screens.classic.server
 
 import androidx.lifecycle.ViewModel
-import com.cadrikmdev.bluetoothintercom.screens.classic.client.BluetoothClassicServerScreenAction
-import com.cadrikmdev.bluetoothintercom.screens.classic.client.BluetoothClassicServerScreenEvent
-import com.cadrikmdev.bluetoothintercom.screens.classic.client.state.BluetoothClassicServerScreenStateManager
+import com.cadrikmdev.bluetoothintercom.screens.classic.server.state.BluetoothClassicServerScreenStateManager
 
 class BluetoothClassicServerScreenViewModel: ViewModel() {
 

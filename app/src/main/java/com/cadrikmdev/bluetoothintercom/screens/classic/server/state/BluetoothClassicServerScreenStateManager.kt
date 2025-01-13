@@ -1,6 +1,5 @@
 package com.cadrikmdev.bluetoothintercom.screens.classic.server.state
 
-import com.cadrikmdev.bluetoothintercom.screens.classic.client.state.BluetoothClassicServerScreenState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -17,10 +16,10 @@ class BluetoothClassicServerScreenStateManager {
         return BluetoothClassicServerScreenState()
     }
 
-    fun setAllPermissionsGranted(allPermissionsGranted: Boolean) {
+    fun setIsServerRunning(allPermissionsGranted: Boolean) {
         mutableStateFlow.update {
             it.copy(
-                allPermissionsGranted = allPermissionsGranted
+                isServerRunning = allPermissionsGranted
             )
         }
     }

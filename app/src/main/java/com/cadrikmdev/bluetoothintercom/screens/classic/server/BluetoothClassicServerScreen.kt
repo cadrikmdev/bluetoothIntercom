@@ -13,10 +13,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.currentStateAsState
-import com.cadrikmdev.bluetoothintercom.screens.classic.client.BluetoothClassicServerScreenAction
-import com.cadrikmdev.bluetoothintercom.screens.classic.client.BluetoothClassicServerScreenEvent
-import com.cadrikmdev.bluetoothintercom.screens.classic.client.BluetoothClassicServerScreenViewModel
-import com.cadrikmdev.bluetoothintercom.screens.classic.client.state.BluetoothClassicServerScreenState
+import com.cadrikmdev.bluetoothintercom.screens.classic.server.state.BluetoothClassicServerScreenState
 import com.cadrikmdev.core.presentation.designsystem.BaseTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -26,7 +23,7 @@ fun BluetoothClassicServerScreenRoot(
     viewModel: BluetoothClassicServerScreenViewModel = koinViewModel(),
 ) {
     val state by viewModel.stateFlow.collectAsStateWithLifecycle()
-    com.cadrikmdev.bluetoothintercom.screens.classic.client.BluetoothClassicServerScreen(
+    BluetoothClassicServerScreen(
         state = state,
         onBackClick = onBackClick,
         onAction = viewModel::onAction,

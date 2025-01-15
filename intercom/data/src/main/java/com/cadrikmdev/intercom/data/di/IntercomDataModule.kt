@@ -1,13 +1,16 @@
 package com.cadrikmdev.intercom.data.di
 
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import androidx.core.content.getSystemService
+import com.cadrikmdev.intercom.data.AndroidBluetoothDevicesProvider
 import com.cadrikmdev.intercom.data.AndroidMessageProcessor
 import com.cadrikmdev.intercom.data.client.AndroidBluetoothBleClientService
 import com.cadrikmdev.intercom.data.client.AndroidBluetoothClientService
 import com.cadrikmdev.intercom.data.server.AndroidBluetoothAdvertiser
 import com.cadrikmdev.intercom.data.server.AndroidBluetoothBleServerService
 import com.cadrikmdev.intercom.data.server.AndroidBluetoothServerService
+import com.cadrikmdev.intercom.domain.BluetoothDevicesProvider
 import com.cadrikmdev.intercom.domain.client.BluetoothClientService
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.server.BluetoothAdvertiser
@@ -65,4 +68,6 @@ val intercomDataModule = module {
 
     singleOf(::AndroidMessageProcessor).bind<MessageProcessor>()
     singleOf(::AndroidBluetoothAdvertiser).bind<BluetoothAdvertiser>()
+
+    singleOf(::AndroidBluetoothDevicesProvider).bind<BluetoothDevicesProvider<BluetoothDevice>>()
 }

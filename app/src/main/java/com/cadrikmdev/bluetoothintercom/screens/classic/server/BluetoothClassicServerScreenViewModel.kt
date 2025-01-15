@@ -2,8 +2,11 @@ package com.cadrikmdev.bluetoothintercom.screens.classic.server
 
 import androidx.lifecycle.ViewModel
 import com.cadrikmdev.bluetoothintercom.screens.classic.server.state.BluetoothClassicServerScreenStateManager
+import com.cadrikmdev.intercom.domain.server.BluetoothServerService
 
-class BluetoothClassicServerScreenViewModel: ViewModel() {
+class BluetoothClassicServerScreenViewModel(
+    private val bluetoothClassicIntercomServer: BluetoothServerService
+): ViewModel() {
 
     private val stateManager = BluetoothClassicServerScreenStateManager()
 
@@ -18,8 +21,16 @@ class BluetoothClassicServerScreenViewModel: ViewModel() {
 
     fun onAction(action: BluetoothClassicServerScreenAction) {
         when (action) {
-            BluetoothClassicServerScreenAction.StartActionClicked -> TODO()
-            BluetoothClassicServerScreenAction.StopActionClicked -> TODO()
+            BluetoothClassicServerScreenAction.StartActionClicked -> startBluetoothServer()
+            BluetoothClassicServerScreenAction.StopActionClicked -> stopBluetoothServer()
         }
+    }
+
+    private fun startBluetoothServer() {
+        bluetoothClassicIntercomServer.startServer()
+    }
+
+    private fun stopBluetoothServer() {
+        bluetoothClassicIntercomServer.stopServer()
     }
 }

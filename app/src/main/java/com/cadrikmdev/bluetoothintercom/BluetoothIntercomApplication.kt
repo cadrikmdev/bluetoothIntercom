@@ -29,10 +29,10 @@ class BluetoothIntercomApplication : Application() {
             androidContext(this@BluetoothIntercomApplication)
             workManagerFactory()
             modules(
-                appModule,
                 intercomDataModule,
                 permissionsModule,
                 permissionHandlerModule,
+                appModule,
             )
         }
     }

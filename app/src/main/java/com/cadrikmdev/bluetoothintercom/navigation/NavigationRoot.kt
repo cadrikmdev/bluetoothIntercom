@@ -1,15 +1,17 @@
 package com.cadrikmdev.bluetoothintercom.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.cadrikmdev.bluetoothintercom.screens.classic.client.BluetoothClassicClientScreenRoot
+import com.cadrikmdev.bluetoothintercom.screens.classic.client.navigation.BluetoothClassicClientRoute
 import com.cadrikmdev.bluetoothintercom.screens.home.HomeScreenRoot
-import com.cadrikmdev.permissions.presentation.screen.permissions.PermissionsScreen
-import com.cadrikmdev.permissions.presentation.util.openAppSettings
+import com.cadrikmdev.bluetoothintercom.screens.home.navigation.HomeScreenRoute
+import com.cadrikmdev.permissions.presentation.navigation.PermissionsNavigation
+import com.cadrikmdev.permissions.presentation.navigation.permissionsGraph
 
 
 @Composable
@@ -18,13 +20,14 @@ fun NavigationRoot(
 ) {
     NavHost(
         navController = navController,
-        startDestination = "main"
+        startDestination = MainNavigation
     ) {
         mainGraph(
             navController = navController,
         )
         permissionsGraph(
             navController = navController,
+            goBackRoute = HomeScreenRoute
         )
     }
 }
@@ -32,17 +35,16 @@ fun NavigationRoot(
 private fun NavGraphBuilder.mainGraph(
     navController: NavHostController,
 ) {
-    navigation(
-        startDestination = "main_screen",
-        route = "main"
+    navigation<MainNavigation>(
+        startDestination = HomeScreenRoute
     ) {
-        composable("main_screen") {
+        composable<HomeScreenRoute> {
             HomeScreenRoot(
                 onResolvePermissionClick = {
-                    navController.navigate("permissions")
+                    navController.navigate(PermissionsNavigation)
                 },
                 onBluetoothClassicClientClick = {
-
+                    navController.navigate(BluetoothClassicClientRoute)
                 },
                 onBluetoothClassicServerClick = {
 
@@ -55,28 +57,14 @@ private fun NavGraphBuilder.mainGraph(
                 }
             )
         }
-    }
-}
-
-private fun NavGraphBuilder.permissionsGraph(
-    navController: NavHostController,
-) {
-    navigation(
-        startDestination = "permissions_screen",
-        route = "permissions"
-    ) {
-        composable("permissions_screen") {
-            val context = LocalContext.current
-            PermissionsScreen(
-                onBackPressed = {
-                    navController.navigate("main") {
-                        popUpTo("permissions") {
+        composable<BluetoothClassicClientRoute> {
+            BluetoothClassicClientScreenRoot(
+                onBackClick = {
+                    navController.navigate(HomeScreenRoute) {
+                        popUpTo(BluetoothClassicClientRoute) {
                             inclusive = true
                         }
                     }
-                },
-                openAppSettings = {
-                    context.openAppSettings()
                 }
             )
         }

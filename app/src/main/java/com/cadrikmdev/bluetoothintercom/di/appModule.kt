@@ -24,10 +24,10 @@ val appModule = module {
     viewModelOf(::HomeScreenViewModel)
 
     viewModel {
-        val bluetoothServerService =
-            get<BluetoothServerService>(named(DI_BLUETOOTH_SERVER_SERVICE_CLASSIC))
+//        val bluetoothServerService =
+//            get<BluetoothServerService>(named(DI_BLUETOOTH_SERVER_SERVICE_CLASSIC))
         BluetoothClassicServerScreenViewModel(
-            bluetoothServerService
+            get(named(DI_BLUETOOTH_SERVER_SERVICE_CLASSIC)),
         )
     }
 

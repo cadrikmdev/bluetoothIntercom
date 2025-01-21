@@ -29,7 +29,6 @@ import java.util.UUID
 class AndroidBluetoothServerService(
     private val context: Context,
     private val messageProcessor: MessageProcessor,
-    private val packageInfoProvider: PackageInfoProvider
 ) : BluetoothServerService {
 
     private val serviceUUID: UUID = ManagerControlServiceProtocol.customServiceUUID

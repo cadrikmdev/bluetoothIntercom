@@ -8,6 +8,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.cadrikmdev.bluetoothintercom.screens.classic.client.BluetoothClassicClientScreenRoot
 import com.cadrikmdev.bluetoothintercom.screens.classic.client.navigation.BluetoothClassicClientRoute
+import com.cadrikmdev.bluetoothintercom.screens.classic.server.BluetoothClassicServerScreenRoot
+import com.cadrikmdev.bluetoothintercom.screens.classic.server.navigation.BluetoothClassicServerRoute
 import com.cadrikmdev.bluetoothintercom.screens.home.HomeScreenRoot
 import com.cadrikmdev.bluetoothintercom.screens.home.navigation.HomeScreenRoute
 import com.cadrikmdev.permissions.presentation.navigation.PermissionsNavigation
@@ -47,7 +49,7 @@ private fun NavGraphBuilder.mainGraph(
                     navController.navigate(BluetoothClassicClientRoute)
                 },
                 onBluetoothClassicServerClick = {
-
+                    navController.navigate(BluetoothClassicServerRoute)
                 },
                 onBluetoothLeClientClick = {
 
@@ -62,6 +64,17 @@ private fun NavGraphBuilder.mainGraph(
                 onBackClick = {
                     navController.navigate(HomeScreenRoute) {
                         popUpTo(BluetoothClassicClientRoute) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+        composable<BluetoothClassicServerRoute> {
+            BluetoothClassicServerScreenRoot(
+                onBackClick = {
+                    navController.navigate(HomeScreenRoute) {
+                        popUpTo(BluetoothClassicServerRoute) {
                             inclusive = true
                         }
                     }

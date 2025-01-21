@@ -15,7 +15,7 @@ class BluetoothClassicServerScreenViewModel(
 
     fun onEvent(event: BluetoothClassicServerScreenEvent) {
         when (event) {
-            BluetoothClassicServerScreenEvent.OnResumed -> TODO()
+            BluetoothClassicServerScreenEvent.OnResumed -> { }
         }
     }
 

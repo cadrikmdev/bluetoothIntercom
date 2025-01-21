@@ -33,7 +33,6 @@ val intercomDataModule = module {
         AndroidBluetoothServerService(
             get(),
             get(),
-            get()
         )
     }
 
@@ -41,7 +40,6 @@ val intercomDataModule = module {
         AndroidBluetoothBleServerService(
             get(),
             get(),
-            get()
         )
     }
 

@@ -6,4 +6,15 @@
     <string name="resolve_missing_permissions">Resolve</string>
     <string name="client">Client</string>
     <string name="server">Server</string>
+    <string name="bluetoothAdapterDisabled">Bluetooth disabled</string>
+    <string name="enable">Enable</string>
+    <string name="please_connect_signal_tracking_device">Please connect bluetooth device to receive messages</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="updated_at">Updated at</string>
+    <string name="status">Status</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="connect">Connect</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
 </resources>

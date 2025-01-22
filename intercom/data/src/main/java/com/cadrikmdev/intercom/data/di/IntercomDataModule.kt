@@ -1,5 +1,6 @@
 package com.cadrikmdev.intercom.data.di
 
+import AndroidBluetoothService
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import androidx.core.content.getSystemService
@@ -15,6 +16,7 @@ import com.cadrikmdev.intercom.domain.client.BluetoothClientService
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.server.BluetoothAdvertiser
 import com.cadrikmdev.intercom.domain.server.BluetoothServerService
+import com.cadrikmdev.intercom.domain.service.BluetoothService
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
@@ -68,4 +70,5 @@ val intercomDataModule = module {
     singleOf(::AndroidBluetoothAdvertiser).bind<BluetoothAdvertiser>()
 
     singleOf(::AndroidBluetoothDevicesProvider).bind<BluetoothDevicesProvider<BluetoothDevice>>()
+    singleOf(::AndroidBluetoothService).bind<BluetoothService>()
 }

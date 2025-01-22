@@ -46,14 +46,8 @@ class AndroidBluetoothBleClientService(
                     return
                 }
                 Timber.d("Discovered BLE device: ${device.name} (${device.address})")
-                val deviceInfo = TrackingDevice(
-                    address = device.address,
-                    name = device.name ?: "Unknown",
-                    connected = false,
-                    status = MeasurementState.UNKNOWN,
-                    updateTimestamp = System.currentTimeMillis(),
-                    deviceAppVersion = ""
-                )
+
+                val deviceInfo =  messageProcessor.processConnectedDevice(device.name, device.address)
                 applicationScope.launch {
                     trackingDevices.emit(trackingDevices.value + (device.address to deviceInfo))
                 }

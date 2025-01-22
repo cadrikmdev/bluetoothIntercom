@@ -1,6 +1,6 @@
 package com.cadrikmdev.bluetoothintercom.screens.classic.client.state
 
-import com.cadrikmdev.intercom.domain.data.BluetoothDevice
+import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -17,10 +17,18 @@ class BluetoothClassicClientScreenStateManager {
         return BluetoothClassicClientScreenState()
     }
 
-    fun setPairedDevices(devices: List<BluetoothDevice>) {
+    fun setPairedDevices(devices: List<TrackingDevice>) {
         mutableStateFlow.update {
             it.copy(
                 devices = devices
+            )
+        }
+    }
+
+    fun updateIsBluetoothEnabled(bluetoothEnabled: Boolean) {
+        mutableStateFlow.update {
+            it.copy(
+                isBluetoothAdapterEnabled = bluetoothEnabled
             )
         }
     }

@@ -13,7 +13,6 @@ import com.cadrikmdev.intercom.domain.client.BluetoothClientService
 import com.cadrikmdev.intercom.domain.client.BluetoothError
 import com.cadrikmdev.intercom.domain.client.DeviceType
 import com.cadrikmdev.intercom.domain.client.TrackingDevice
-import com.cadrikmdev.intercom.domain.data.MeasurementState
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.message.TrackerAction
 import kotlinx.coroutines.CompletableDeferred
@@ -62,7 +61,7 @@ class AndroidBluetoothClientService(
     private var bluetoothAdapter: BluetoothAdapter? = null
 
     init {
-        devicesProvider.observePairedDevices(DeviceType.TRACKER)
+        devicesProvider.observePairedDevices(DeviceType.WORKER)
 //        .onEach { devices ->
 //            val trackDevices = devices.values
 //                .mapNotNull {
@@ -297,9 +296,9 @@ class AndroidBluetoothClientService(
 
     private fun updateStatus(address: String, updateProgress: TrackerAction.UpdateProgress) {
         val updatedDevice = trackingDevices.value[address]?.copy(
-            status = updateProgress.progress.state,
+//            status = updateProgress.progress.state,
             updateTimestamp = updateProgress.progress.timestamp,
-            deviceAppVersion = updateProgress.progress.appVersion ?: "",
+//            deviceAppVersion = updateProgress.progress.appVersion ?: "",
         )
         updatedDevice?.let {
             val tmpTrackingDevices = trackingDevices.value.toMutableMap()
@@ -314,7 +313,7 @@ class AndroidBluetoothClientService(
     private fun markDeviceDisconnected(address: String) {
         val connectedDevice = trackingDevices.value[address]?.copy(
             connected = false,
-            status = MeasurementState.UNKNOWN,
+//            status = MeasurementState.UNKNOWN,
             updateTimestamp = System.currentTimeMillis()
         )
         connectedDevice?.let {

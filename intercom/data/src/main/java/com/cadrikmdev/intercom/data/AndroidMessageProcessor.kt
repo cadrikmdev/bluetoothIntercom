@@ -3,6 +3,7 @@ package com.cadrikmdev.intercom.data
 import com.cadrikmdev.intercom.data.message.TrackerActionDto
 import com.cadrikmdev.intercom.data.message.toTrackerAction
 import com.cadrikmdev.intercom.data.message.toTrackerActionDto
+import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.message.TrackerAction
 import kotlinx.serialization.SerializationException
@@ -52,5 +53,14 @@ class AndroidMessageProcessor(
             e.printStackTrace()
         }
         return null
+    }
+
+    override fun processConnectedDevice(name: String?, address: String): TrackingDevice {
+        return TrackingDevice(
+            address = address,
+            name = name ?: "Unknown",
+            connected = false,
+            updateTimestamp = System.currentTimeMillis(),
+        )
     }
 }

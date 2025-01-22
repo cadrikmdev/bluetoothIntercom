@@ -1,7 +1,8 @@
 package com.cadrikmdev.bluetoothintercom.screens.classic.client.state
 
-import com.cadrikmdev.intercom.domain.data.BluetoothDevice
+import com.cadrikmdev.intercom.domain.client.TrackingDevice
 
 data class BluetoothClassicClientScreenState(
-    val devices: List<BluetoothDevice> = emptyList()
+    val isBluetoothAdapterEnabled: Boolean = false,
+    val devices: List<TrackingDevice> = emptyList()
 )

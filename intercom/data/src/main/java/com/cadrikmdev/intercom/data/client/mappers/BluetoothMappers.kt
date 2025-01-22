@@ -25,8 +25,8 @@ fun BluetoothDevice.toTrackingDevice(): TrackingDevice? {
             name = this.name,
             address = this.address,
             connected = false,
-            status = MeasurementState.UNKNOWN,
-            deviceAppVersion = "",
+//            status = MeasurementState.UNKNOWN,
+//            deviceAppVersion = "",
             updateTimestamp = System.currentTimeMillis()
         )
     } catch (e: SecurityException) {
@@ -55,8 +55,8 @@ fun com.cadrikmdev.intercom.domain.data.BluetoothDevice.toTrackingDevice(): Trac
             name = this.name,
             address = this.address,
             connected = false,
-            status = MeasurementState.UNKNOWN,
-            deviceAppVersion = "",
+//            status = MeasurementState.UNKNOWN,
+//            deviceAppVersion = "",
             updateTimestamp = System.currentTimeMillis()
         )
     } catch (e: SecurityException) {

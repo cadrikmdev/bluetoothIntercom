@@ -34,6 +34,9 @@ val appModule = module {
     viewModel {
         BluetoothClassicClientScreenViewModel(
             get(named(DI_BLUETOOTH_CLIENT_SERVICE_CLASSIC)),
+            get(),
+            get(),
+            get(),
         )
     }
 }

@@ -1,6 +1,6 @@
 package com.cadrikmdev.intercom.data.message
 
-import com.cadrikmdev.intercom.domain.data.MeasurementProgress
+import com.cadrikmdev.intercom.domain.data.MessageContent
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -16,5 +16,5 @@ sealed class TrackerActionDto {
     data class StopTest(val address: String) : TrackerActionDto()
     @Serializable
     @SerialName("UpdateProgress")
-    data class UpdateProgress(val progress: MeasurementProgress) : TrackerActionDto()
+    data class UpdateProgress(val progress: MessageContent) : TrackerActionDto()
 }

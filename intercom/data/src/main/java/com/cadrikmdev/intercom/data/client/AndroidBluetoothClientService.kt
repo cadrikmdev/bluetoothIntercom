@@ -14,7 +14,7 @@ import com.cadrikmdev.intercom.domain.client.BluetoothError
 import com.cadrikmdev.intercom.domain.client.DeviceType
 import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
-import com.cadrikmdev.intercom.domain.message.TrackerAction
+import com.cadrikmdev.intercom.domain.message.MessageAction
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,8 +38,8 @@ class AndroidBluetoothClientService(
     private val messageProcessor: MessageProcessor,
 ) : BluetoothClientService {
 
-    override val sendActionFlow: MutableStateFlow<TrackerAction?> =
-        MutableStateFlow<TrackerAction?>(null)
+    override val sendActionFlow: MutableStateFlow<MessageAction?> =
+        MutableStateFlow<MessageAction?>(null)
 
     val sendActionJob: Job = sendActionFlow.onEach {
 
@@ -87,9 +87,9 @@ class AndroidBluetoothClientService(
 
         sendActionFlow.onEach { action ->
             val actionDeviceAddress = when (action) {
-                is TrackerAction.StartTest -> action.address
-                is TrackerAction.StopTest -> action.address
-                is TrackerAction.UpdateProgress -> null
+                is MessageAction.StartTest -> action.address
+                is MessageAction.StopTest -> action.address
+                is MessageAction.UpdateProgress -> null
                 null -> null
             }
 
@@ -242,7 +242,7 @@ class AndroidBluetoothClientService(
                                 Timber.d("Received: $message")
                                 // Handle the received message
                                 val action = messageProcessor.processMessage(message)
-                                if (action is TrackerAction.UpdateProgress) {
+                                if (action is MessageAction.UpdateProgress) {
                                     updateStatus(address, action)
                                 }
                             }
@@ -294,7 +294,7 @@ class AndroidBluetoothClientService(
         }
     }
 
-    private fun updateStatus(address: String, updateProgress: TrackerAction.UpdateProgress) {
+    private fun updateStatus(address: String, updateProgress: MessageAction.UpdateProgress) {
         val updatedDevice = trackingDevices.value[address]?.copy(
 //            status = updateProgress.progress.state,
             updateTimestamp = updateProgress.progress.timestamp,

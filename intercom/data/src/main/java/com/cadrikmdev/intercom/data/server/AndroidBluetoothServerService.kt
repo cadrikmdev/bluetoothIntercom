@@ -6,13 +6,12 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import android.content.Context
-import com.cadrikmdev.core.domain.package_info.PackageInfoProvider
 import com.cadrikmdev.intercom.data.util.isBluetoothConnectPermissionGranted
 import com.cadrikmdev.intercom.domain.ManagerControlServiceProtocol
-import com.cadrikmdev.intercom.domain.data.MeasurementProgress
+import com.cadrikmdev.intercom.domain.data.MessageContent
 import com.cadrikmdev.intercom.domain.data.MeasurementState
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
-import com.cadrikmdev.intercom.domain.message.TrackerAction
+import com.cadrikmdev.intercom.domain.message.MessageAction
 import com.cadrikmdev.intercom.domain.server.BluetoothServerService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,19 +37,17 @@ class AndroidBluetoothServerService(
     private var gattServer: BluetoothGattServer? = null
     private var bluetoothAdapter: BluetoothAdapter? = null
 
-    var getStatusUpdate: () -> MeasurementProgress? = {
-        MeasurementProgress(
-            state = MeasurementState.NOT_ACTIVATED,
-            errors = null,
-            appVersion = null,
+    var getStatusUpdate: () -> MessageContent? = {
+        MessageContent(
+            content = "Default content",
             timestamp = System.currentTimeMillis()
         )
     }
 
-    private val _receivedActionFlow = MutableSharedFlow<TrackerAction?>()
-    override val receivedActionFlow: SharedFlow<TrackerAction?> get() = _receivedActionFlow
+    private val _receivedActionFlow = MutableSharedFlow<MessageAction?>()
+    override val receivedActionFlow: SharedFlow<MessageAction?> get() = _receivedActionFlow
 
-    override fun setMeasurementProgressCallback(statusUpdate: () -> MeasurementProgress?) {
+    override fun setMeasurementProgressCallback(statusUpdate: () -> MessageContent?) {
         this.getStatusUpdate = statusUpdate
     }
 
@@ -135,7 +132,7 @@ class AndroidBluetoothServerService(
                                 val message = getStatusUpdate()
                                 message?.let {
                                     val encodedMessage = messageProcessor.sendAction(
-                                        TrackerAction.UpdateProgress(progress = it)
+                                        MessageAction.UpdateProgress(progress = it)
                                     )
                                     Timber.d("Sending: $encodedMessage")
                                     val byteArray = encodedMessage?.toByteArray()

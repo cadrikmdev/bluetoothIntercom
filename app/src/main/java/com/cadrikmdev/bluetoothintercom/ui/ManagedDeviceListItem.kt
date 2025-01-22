@@ -24,8 +24,6 @@ import com.cadrikmdev.core.presentation.designsystem.BaseTheme
 import com.cadrikmdev.core.presentation.designsystem.components.BaseActionButton
 import com.cadrikmdev.core.presentation.ui.toLocalTime
 import com.cadrikmdev.intercom.domain.client.TrackingDevice
-import com.cadrikmdev.intercom.domain.data.MeasurementState
-import com.cadrikmdev.intercom.presentation.mappers.toUiString
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 

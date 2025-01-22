@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,6 +30,7 @@ import com.cadrikmdev.bluetoothintercom.screens.classic.client.state.BluetoothCl
 import com.cadrikmdev.bluetoothintercom.ui.ManagedDeviceListItem
 import com.cadrikmdev.core.presentation.designsystem.BaseTheme
 import com.cadrikmdev.core.presentation.designsystem.components.BaseOutlinedActionButton
+import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -157,4 +159,20 @@ fun BluetoothClassicClientScreen(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun previewBluetoothClassicClientScreen() {
+    BluetoothClassicClientScreen(
+      state = BluetoothClassicClientScreenState(
+          isBluetoothAdapterEnabled = true,
+          listOf(
+            TrackingDevice(name = "Pixel 5", connected = true, updateTimestamp = System.currentTimeMillis(), address = "00:00:00:00:00:00:00")
+          ),
+    ),
+        onAction = {},
+        onEvent = {},
+        onBackClick = {},
+    )
 }

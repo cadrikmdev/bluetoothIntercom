@@ -23,4 +23,12 @@ class BluetoothClassicServerScreenStateManager {
             )
         }
     }
+
+    fun updateIsBluetoothEnabled(bluetoothEnabled: Boolean) {
+        mutableStateFlow.update {
+            it.copy(
+                isBluetoothAdapterEnabled = bluetoothEnabled
+            )
+        }
+    }
 }

@@ -5,7 +5,7 @@ import com.cadrikmdev.intercom.data.message.toTrackerAction
 import com.cadrikmdev.intercom.data.message.toTrackerActionDto
 import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
-import com.cadrikmdev.intercom.domain.message.TrackerAction
+import com.cadrikmdev.intercom.domain.message.MessageAction
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -29,7 +29,7 @@ class AndroidMessageProcessor(
         encodeDefaults = true
     }
 
-    override fun processMessage(message: String?): TrackerAction? {
+    override fun processMessage(message: String?): MessageAction? {
         try {
             message?.let { mess ->
                 return json.decodeFromString<TrackerActionDto>(mess).toTrackerAction()
@@ -42,7 +42,7 @@ class AndroidMessageProcessor(
         return null
     }
 
-    override fun sendAction(action: TrackerAction?): String? {
+    override fun sendAction(action: MessageAction?): String? {
         try {
             action?.let {
                 return json.encodeToString(it.toTrackerActionDto()) + "\n"

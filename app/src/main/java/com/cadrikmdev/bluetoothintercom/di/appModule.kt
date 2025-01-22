@@ -28,6 +28,8 @@ val appModule = module {
 //            get<BluetoothServerService>(named(DI_BLUETOOTH_SERVER_SERVICE_CLASSIC))
         BluetoothClassicServerScreenViewModel(
             get(named(DI_BLUETOOTH_SERVER_SERVICE_CLASSIC)),
+            get(),
+            get(),
         )
     }
 

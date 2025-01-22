@@ -8,13 +8,12 @@ import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.Context
-import com.cadrikmdev.core.domain.package_info.PackageInfoProvider
 import com.cadrikmdev.intercom.data.util.isBluetoothConnectPermissionGranted
 import com.cadrikmdev.intercom.domain.ManagerControlServiceProtocol
-import com.cadrikmdev.intercom.domain.data.MeasurementProgress
+import com.cadrikmdev.intercom.domain.data.MessageContent
 import com.cadrikmdev.intercom.domain.data.MeasurementState
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
-import com.cadrikmdev.intercom.domain.message.TrackerAction
+import com.cadrikmdev.intercom.domain.message.MessageAction
 import com.cadrikmdev.intercom.domain.server.BluetoothServerService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,19 +40,17 @@ class AndroidBluetoothBleServerService(
 
     private val connectedDevices = mutableSetOf<String>()
 
-    private val _receivedActionFlow = MutableSharedFlow<TrackerAction?>()
-    override val receivedActionFlow: SharedFlow<TrackerAction?> get() = _receivedActionFlow
+    private val _receivedActionFlow = MutableSharedFlow<MessageAction?>()
+    override val receivedActionFlow: SharedFlow<MessageAction?> get() = _receivedActionFlow
 
-    var getStatusUpdate: () -> MeasurementProgress? = {
-        MeasurementProgress(
-            state = MeasurementState.NOT_ACTIVATED,
-            errors = null,
-            appVersion = null,
+    var getStatusUpdate: () -> MessageContent? = {
+        MessageContent(
+            content = "Default content",
             timestamp = System.currentTimeMillis()
         )
     }
 
-    override fun setMeasurementProgressCallback(statusUpdate: () -> MeasurementProgress?) {
+    override fun setMeasurementProgressCallback(statusUpdate: () -> MessageContent?) {
         this.getStatusUpdate = statusUpdate
     }
 
@@ -109,15 +106,15 @@ class AndroidBluetoothBleServerService(
             characteristic: android.bluetooth.BluetoothGattCharacteristic
         ) {
             if (characteristic.uuid == characteristicUUID) {
-                val progress = getStatusUpdate()?.state?.name?.toByteArray() ?: byteArrayOf()
-                gattServer?.sendResponse(
-                    device,
-                    requestId,
-                    BluetoothGatt.GATT_SUCCESS,
-                    offset,
-                    progress
-                )
-                Timber.d("Read request from ${device.address}: ${String(progress)}")
+//                val progress = getStatusUpdate()?.state?.name?.toByteArray() ?: byteArrayOf()
+//                gattServer?.sendResponse(
+//                    device,
+//                    requestId,
+//                    BluetoothGatt.GATT_SUCCESS,
+//                    offset,
+//                    progress
+//                )
+//                Timber.d("Read request from ${device.address}: ${String(progress)}")
             }
         }
 

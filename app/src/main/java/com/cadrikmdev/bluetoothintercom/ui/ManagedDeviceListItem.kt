@@ -33,6 +33,7 @@ fun ManagedDeviceListItem(
     onStartClick: (address: String) -> Unit,
     onStopClick: (address: String) -> Unit,
     onConnectClick: (address: String) -> Unit,
+    onDisconnectClick: (address: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showDropDown by remember {
@@ -90,7 +91,11 @@ fun ManagedDeviceListItem(
                 modifier = Modifier.weight(1.5f),
                 isLoading = false
             ) {
-                onConnectClick(trackingDeviceUi.address)
+                if (trackingDeviceUi.connected) {
+                    onDisconnectClick(trackingDeviceUi.address)
+                } else {
+                    onConnectClick(trackingDeviceUi.address)
+                }
             }
             BaseActionButton(
                 text = stringResource(id = R.string.start),
@@ -126,6 +131,7 @@ private fun RunListItemPreview() {
             onStartClick = { },
             onStopClick = { },
             onConnectClick = { },
+            onDisconnectClick = { },
         )
     }
 }

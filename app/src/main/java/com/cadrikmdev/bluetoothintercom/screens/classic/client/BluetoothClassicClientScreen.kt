@@ -151,6 +151,13 @@ fun BluetoothClassicClientScreen(
                                             )
                                         )
                                     },
+                                    onDisconnectClick = { address ->
+                                        onAction(
+                                            BluetoothClassicClientScreenAction.DisconnectToDeviceClicked(
+                                                address
+                                            )
+                                        )
+                                    },
                                 )
                             }
                         }

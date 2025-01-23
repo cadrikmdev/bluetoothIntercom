@@ -99,7 +99,7 @@ class AndroidBluetoothServerService(
                 }
                 while (shouldLoop) {
                     try {
-                        Timber.d("Trying to establish conection with client")
+                        Timber.d("Trying to establish connection with client")
                         val socket: BluetoothSocket? = serverSocket?.accept()
                         socket?.let {
                             // Handle the connection in a separate thread

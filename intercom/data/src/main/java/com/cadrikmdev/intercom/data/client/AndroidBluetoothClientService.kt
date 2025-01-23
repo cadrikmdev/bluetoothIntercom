@@ -85,10 +85,11 @@ class AndroidBluetoothClientService(
             trackingDevices.emit(trackDevices)
         }.launchIn(applicationScope + Dispatchers.IO)
 
-        sendActionFlow.onEach { action ->
-            val actionDeviceAddress = when (action) {
-                is MessageAction.StartTest -> action.address
-                is MessageAction.StopTest -> action.address
+        sendActionFlow.onEach { message ->
+            // TODO: Inject some message processor
+            val actionDeviceAddress = when (message) {
+                is MessageAction.StartTest -> message.address
+                is MessageAction.StopTest -> message.address
                 is MessageAction.UpdateProgress -> null
                 null -> null
             }
@@ -99,7 +100,7 @@ class AndroidBluetoothClientService(
                     CoroutineScope(Dispatchers.IO).launch {
                         val outputStream = _outputStream.value[deviceAddress] ?: socket.outputStream
                         _outputStream.value.plus(Pair(deviceAddress, outputStream))
-                        Timber.d("Trying to send action: $action")
+                        Timber.d("Trying to send message: $message")
                         try {
                             // Using supervisorScope to ensure child coroutines are handled properly
                             supervisorScope {
@@ -144,7 +145,7 @@ class AndroidBluetoothClientService(
 
     override suspend fun connectToDevice(deviceAddress: String): com.cadrikmdev.core.domain.util.Result<Boolean, BluetoothError> {
         // Ensure the location permission is granted (required for Bluetooth discovery from Android M+)
-        if (context.isFineLocationPermissionGranted()) return com.cadrikmdev.core.domain.util.Result.Error(BluetoothError.NO_FINE_LOCATION_PERMISSIONS)
+        if (!context.isFineLocationPermissionGranted()) return com.cadrikmdev.core.domain.util.Result.Error(BluetoothError.NO_FINE_LOCATION_PERMISSIONS)
         if (!context.isBluetoothConnectPermissionGranted()) {
             return com.cadrikmdev.core.domain.util.Result.Error(BluetoothError.MISSING_BLUETOOTH_CONNECT_PERMISSION)
         }

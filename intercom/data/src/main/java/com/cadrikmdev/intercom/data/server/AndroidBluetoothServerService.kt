@@ -9,15 +9,17 @@ import android.content.Context
 import com.cadrikmdev.intercom.data.util.isBluetoothConnectPermissionGranted
 import com.cadrikmdev.intercom.domain.ManagerControlServiceProtocol
 import com.cadrikmdev.intercom.domain.data.MessageContent
-import com.cadrikmdev.intercom.domain.data.MeasurementState
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.message.MessageAction
 import com.cadrikmdev.intercom.domain.server.BluetoothServerService
+import com.cadrikmdev.intercom.domain.server.ConnectionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
@@ -44,8 +46,17 @@ class AndroidBluetoothServerService(
         )
     }
 
-    private val _receivedActionFlow = MutableSharedFlow<MessageAction?>()
-    override val receivedActionFlow: SharedFlow<MessageAction?> get() = _receivedActionFlow
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            _connectionStateFlow.emit(ConnectionState.STOPPED)
+        }
+    }
+
+    private val _receivedMessageFlow = MutableSharedFlow<MessageAction?>()
+    override val receivedMessageFlow: SharedFlow<MessageAction?> get() = _receivedMessageFlow
+
+    private val _connectionStateFlow = MutableStateFlow<ConnectionState>(ConnectionState.STOPPED)
+    override val connectionStateFlow: StateFlow<ConnectionState> get() = _connectionStateFlow
 
     override fun setMeasurementProgressCallback(statusUpdate: () -> MessageContent?) {
         this.getStatusUpdate = statusUpdate
@@ -59,6 +70,9 @@ class AndroidBluetoothServerService(
         // Ensure Bluetooth is supported and enabled on the device
         if (!context.isBluetoothConnectPermissionGranted() || bluetoothAdapter == null || bluetoothAdapter?.isEnabled != true) {
             // Bluetooth is not supported or not enabled
+            CoroutineScope(Dispatchers.IO).launch {
+                _connectionStateFlow.emit(ConnectionState.ERROR_STARTING)
+            }
             return
         }
 
@@ -68,6 +82,9 @@ class AndroidBluetoothServerService(
         bluetoothAdapter?.let {
             if (bluetoothSocket?.isConnected == true) {
                 Timber.d("Bluetooth socket is already created.")
+                CoroutineScope(Dispatchers.IO).launch {
+                    _connectionStateFlow.emit(ConnectionState.CONNECTED)
+                }
                 return
             }
             val serverSocket: BluetoothServerSocket? =
@@ -76,7 +93,10 @@ class AndroidBluetoothServerService(
             Timber.d("starting listenning for connections with service uuid = ${serviceUUID}")
             Thread {
                 var shouldLoop = true
-                Timber.d("Waiting for client to connect")
+                CoroutineScope(Dispatchers.IO).launch {
+                    Timber.d("Waiting for client to connect")
+                    _connectionStateFlow.emit(ConnectionState.WAITING_FOR_CONNECTION)
+                }
                 while (shouldLoop) {
                     try {
                         Timber.d("Trying to establish conection with client")
@@ -84,11 +104,17 @@ class AndroidBluetoothServerService(
                         socket?.let {
                             // Handle the connection in a separate thread
                             Timber.d("Connection made successfully with client")
+                            CoroutineScope(Dispatchers.IO).launch {
+                                _connectionStateFlow.emit(ConnectionState.CONNECTED)
+                            }
                             manageConnectedSocket(it)
                         }
                     } catch (e: IOException) {
                         Timber.e("Socket's accept() method failed", e)
                         Thread.sleep(1000L)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            _connectionStateFlow.emit(ConnectionState.ERROR_CONNECTING)
+                        }
                         shouldLoop = true // todo change to false
                     }
                 }
@@ -117,11 +143,14 @@ class AndroidBluetoothServerService(
                                 // Handle the received message
                                 val action = messageProcessor.processMessage(message)
                                 launch(Dispatchers.IO) {
-                                    _receivedActionFlow.emit(action)
+                                    _receivedMessageFlow.emit(action)
                                 }
                             }
                         } catch (e: IOException) {
                             Timber.e(e, "Error occurred during receiving data")
+                            CoroutineScope(Dispatchers.IO).launch {
+                                _connectionStateFlow.emit(ConnectionState.ERROR_RECEIVING)
+                            }
                         }
                     }
 
@@ -145,6 +174,9 @@ class AndroidBluetoothServerService(
                             }
                         } catch (e: IOException) {
                             Timber.e(e, "Error occurred during sending data")
+                            CoroutineScope(Dispatchers.IO).launch {
+                                _connectionStateFlow.emit(ConnectionState.ERROR_SENDING)
+                            }
                         }
                     }
 
@@ -154,6 +186,9 @@ class AndroidBluetoothServerService(
                 }
             } catch (e: IOException) {
                 Timber.e(e, "Error occurred during communication")
+                CoroutineScope(Dispatchers.IO).launch {
+                    _connectionStateFlow.emit(ConnectionState.ERROR_COMMUNICATION)
+                }
             } finally {
                 // Ensure the streams and socket are closed properly
                 try {
@@ -163,6 +198,12 @@ class AndroidBluetoothServerService(
                     Timber.d("Socket closed: ${socket.remoteDevice.address}")
                 } catch (e: IOException) {
                     Timber.e(e, "Error occurred while closing the socket")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        _connectionStateFlow.emit(ConnectionState.ERROR_CLOSING)
+                    }
+                }
+                CoroutineScope(Dispatchers.IO).launch {
+                    _connectionStateFlow.emit(ConnectionState.DISCONNECTED)
                 }
             }
         }
@@ -171,8 +212,15 @@ class AndroidBluetoothServerService(
     override fun stopServer() {
         try {
             bluetoothSocket?.close()
+            CoroutineScope(Dispatchers.IO).launch {
+                _connectionStateFlow.emit(ConnectionState.DISCONNECTED)
+            }
         } catch (e: IOException) {
             Timber.e(e, "Error occurred while closing the socket")
+            CoroutineScope(Dispatchers.IO).launch {
+                _connectionStateFlow.emit(ConnectionState.ERROR_CLOSING)
+            }
         }
+
     }
 }

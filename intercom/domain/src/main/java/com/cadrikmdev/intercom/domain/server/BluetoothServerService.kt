@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.SharedFlow
 
 interface BluetoothServerService {
 
-    val receivedActionFlow: SharedFlow<MessageAction?>
+    val receivedMessageFlow: SharedFlow<MessageAction?>
+
+    val connectionStateFlow: SharedFlow<ConnectionState>
 
     fun startServer()
 

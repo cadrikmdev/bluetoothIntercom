@@ -22,6 +22,12 @@ class BluetoothClassicServerScreenViewModel(
     val stateFlow
         get() = this.stateManager.stateFlow
 
+    init {
+        bluetoothClassicIntercomServer.connectionStateFlow.onEach {
+            stateManager.updateIntercomState(it)
+        }.launchIn(viewModelScope)
+    }
+
     fun onEvent(event: BluetoothClassicServerScreenEvent) {
         when (event) {
             BluetoothClassicServerScreenEvent.OnResumed -> {
@@ -57,7 +63,7 @@ class BluetoothClassicServerScreenViewModel(
                     timestamp = System.currentTimeMillis(),
                 )
             }
-            bluetoothClassicIntercomServer.receivedActionFlow.onEach { action ->
+            bluetoothClassicIntercomServer.receivedMessageFlow.onEach { action ->
 //                when (action) {
 //                    is TrackerAction.StartTest -> {
 //                        stopObserving()

@@ -15,6 +15,7 @@ import com.cadrikmdev.intercom.domain.data.MeasurementState
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.message.MessageAction
 import com.cadrikmdev.intercom.domain.server.BluetoothServerService
+import com.cadrikmdev.intercom.domain.server.ConnectionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -41,7 +42,10 @@ class AndroidBluetoothBleServerService(
     private val connectedDevices = mutableSetOf<String>()
 
     private val _receivedActionFlow = MutableSharedFlow<MessageAction?>()
-    override val receivedActionFlow: SharedFlow<MessageAction?> get() = _receivedActionFlow
+    override val receivedMessageFlow: SharedFlow<MessageAction?> get() = _receivedActionFlow
+
+    private val _connectionStateFlow = MutableSharedFlow<ConnectionState>()
+    override val connectionStateFlow: SharedFlow<ConnectionState> get() = _connectionStateFlow
 
     var getStatusUpdate: () -> MessageContent? = {
         MessageContent(

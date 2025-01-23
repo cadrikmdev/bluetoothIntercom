@@ -26,6 +26,7 @@ import com.cadrikmdev.bluetoothintercom.screens.classic.server.state.BluetoothCl
 import com.cadrikmdev.core.presentation.designsystem.BaseTheme
 import com.cadrikmdev.core.presentation.designsystem.components.BaseActionButton
 import com.cadrikmdev.core.presentation.designsystem.components.BaseOutlinedActionButton
+import com.cadrikmdev.intercom.domain.server.ConnectionState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -113,6 +114,9 @@ fun BluetoothClassicServerScreen(
                         onAction(BluetoothClassicServerScreenAction.StopActionClicked)
                     }
                 }
+                Text(
+                    text = state.intercomStatus.toString()
+                )
 
             }
         }

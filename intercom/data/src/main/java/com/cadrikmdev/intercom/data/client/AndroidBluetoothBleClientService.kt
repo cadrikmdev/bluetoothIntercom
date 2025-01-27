@@ -16,7 +16,7 @@ import com.cadrikmdev.intercom.domain.client.BluetoothError
 import com.cadrikmdev.intercom.domain.client.DeviceType
 import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
-import com.cadrikmdev.intercom.domain.message.MessageAction
+import com.cadrikmdev.intercom.domain.message.MessageWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -28,8 +28,8 @@ class AndroidBluetoothBleClientService(
     private val messageProcessor: MessageProcessor,
 ) : BluetoothClientService {
 
-    override val sendActionFlow: MutableStateFlow<MessageAction?> =
-        MutableStateFlow<MessageAction?>(null)
+    override val sendActionFlow: MutableStateFlow<MessageWrapper?> =
+        MutableStateFlow<MessageWrapper?>(null)
 
     override val trackingDevices = MutableStateFlow<Map<String, TrackingDevice>>(mapOf())
     private val bluetoothAdapter: BluetoothAdapter? by lazy {

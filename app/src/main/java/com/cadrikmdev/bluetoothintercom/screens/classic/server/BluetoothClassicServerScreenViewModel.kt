@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.cadrikmdev.bluetoothintercom.base.BaseViewModel
 import com.cadrikmdev.bluetoothintercom.screens.classic.server.state.BluetoothClassicServerScreenStateManager
 import com.cadrikmdev.intercom.domain.data.MessageContent
+import com.cadrikmdev.intercom.domain.data.TextContent
+import com.cadrikmdev.intercom.domain.message.SerializableContent
 import com.cadrikmdev.intercom.domain.server.BluetoothServerService
 import com.cadrikmdev.intercom.domain.service.BluetoothService
 import com.cadrikmdev.permissions.domain.PermissionHandler
@@ -59,32 +61,32 @@ class BluetoothClassicServerScreenViewModel(
             bluetoothClassicIntercomServer.startServer()
             bluetoothClassicIntercomServer.setMeasurementProgressCallback {
                 MessageContent(
-                    content = "update message",
+                    content = TextContent("Sample message from bluetooth classic server view model"),
                     timestamp = System.currentTimeMillis(),
                 )
             }
-            bluetoothClassicIntercomServer.receivedMessageFlow.onEach { action ->
-//                when (action) {
-//                    is TrackerAction.StartTest -> {
-//                        stopObserving()
-//                        clearData()
-//                        startObserving()
-//                        _isTracking.emit(true)
-//                        _trackActions.emit(TrackerAction.StartTest(""))
-//                        println("Emitting start action in Tracker")
-//                    }
-//
-//                    is TrackerAction.StopTest -> {
-//                        _isTracking.emit(false)
-//                        _trackActions.emit(TrackerAction.StopTest(""))
-//                        // we can clear all data, because they are already in DB
-//                        clearData()
-//                        println("Emitting stop action in Tracker")
-//                    }
-//
-//                    else -> Unit
-//                }
-            }.launchIn(viewModelScope)
+//            bluetoothClassicIntercomServer.receivedMessageFlow.onEach { action ->
+////                when (action) {
+////                    is TrackerAction.StartTest -> {
+////                        stopObserving()
+////                        clearData()
+////                        startObserving()
+////                        _isTracking.emit(true)
+////                        _trackActions.emit(TrackerAction.StartTest(""))
+////                        println("Emitting start action in Tracker")
+////                    }
+////
+////                    is TrackerAction.StopTest -> {
+////                        _isTracking.emit(false)
+////                        _trackActions.emit(TrackerAction.StopTest(""))
+////                        // we can clear all data, because they are already in DB
+////                        clearData()
+////                        println("Emitting stop action in Tracker")
+////                    }
+////
+////                    else -> Unit
+////                }
+//            }.launchIn(viewModelScope)
         }
     }
 }

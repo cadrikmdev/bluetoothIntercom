@@ -9,16 +9,16 @@ import android.content.Context
 import com.cadrikmdev.intercom.data.util.isBluetoothConnectPermissionGranted
 import com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
 import com.cadrikmdev.intercom.domain.data.MessageContent
+import com.cadrikmdev.intercom.domain.data.TextContent
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
-import com.cadrikmdev.intercom.domain.message.MessageAction
+import com.cadrikmdev.intercom.domain.message.MessageWrapper
+import com.cadrikmdev.intercom.domain.message.SerializableContent
 import com.cadrikmdev.intercom.domain.server.BluetoothServerService
 import com.cadrikmdev.intercom.domain.server.ConnectionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -40,9 +40,9 @@ class AndroidBluetoothServerService(
     private var gattServer: BluetoothGattServer? = null
     private var bluetoothAdapter: BluetoothAdapter? = null
 
-    var getStatusUpdate: () -> MessageContent? = {
+    var getStatusUpdate: () -> MessageContent<SerializableContent>? = {
         MessageContent(
-            content = "Default content",
+            content = TextContent("Simple data from server side"),
             timestamp = System.currentTimeMillis()
         )
     }
@@ -53,13 +53,10 @@ class AndroidBluetoothServerService(
         }
     }
 
-    private val _receivedMessageFlow = MutableSharedFlow<MessageAction?>()
-    override val receivedMessageFlow: SharedFlow<MessageAction?> get() = _receivedMessageFlow
-
     private val _connectionStateFlow = MutableStateFlow<ConnectionState>(ConnectionState.STOPPED)
     override val connectionStateFlow: StateFlow<ConnectionState> get() = _connectionStateFlow
 
-    override fun setMeasurementProgressCallback(statusUpdate: () -> MessageContent?) {
+    override fun setMeasurementProgressCallback(statusUpdate: () -> MessageContent<SerializableContent>?) {
         this.getStatusUpdate = statusUpdate
     }
 
@@ -131,6 +128,7 @@ class AndroidBluetoothServerService(
             val inputStream = socket.inputStream
             val outputStream = socket.outputStream
             val reader = inputStream.bufferedReader()
+            val address = socket.remoteDevice.address
 
             try {
                 // Using supervisorScope to manage child coroutines
@@ -142,10 +140,8 @@ class AndroidBluetoothServerService(
                                 val message = reader.readLine() ?: break
                                 Timber.d("Received: $message")
                                 // Handle the received message
-                                val action = messageProcessor.processMessage(message)
-                                launch(Dispatchers.IO) {
-                                    _receivedMessageFlow.emit(action)
-                                }
+                                val action = messageProcessor.processMessageFrom(address, message)
+
                             }
                         } catch (e: IOException) {
                             Timber.e(e, "Error occurred during receiving data")
@@ -162,7 +158,7 @@ class AndroidBluetoothServerService(
                                 val message = getStatusUpdate()
                                 message?.let {
                                     val encodedMessage = messageProcessor.sendAction(
-                                        MessageAction.UpdateProgress(progress = it)
+                                        MessageWrapper.SendMessage(address = "", content = it)
                                     )
                                     Timber.d("Sending: $encodedMessage")
                                     val byteArray = encodedMessage?.toByteArray()

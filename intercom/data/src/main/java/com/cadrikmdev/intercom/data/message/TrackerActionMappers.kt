@@ -1,19 +1,18 @@
 package com.cadrikmdev.intercom.data.message
 
-import com.cadrikmdev.intercom.domain.message.MessageAction
+import com.cadrikmdev.intercom.domain.message.MessageWrapper
 
-fun TrackerActionDto.toTrackerAction(): MessageAction {
+fun TrackerActionDto.toTrackerAction(): MessageWrapper {
     return when (this) {
-        is TrackerActionDto.StartTest -> MessageAction.StartTest(address)
-        is TrackerActionDto.StopTest -> MessageAction.StopTest(address)
-        is TrackerActionDto.UpdateProgress -> MessageAction.UpdateProgress(progress)
+        is TrackerActionDto.SendMessage -> MessageWrapper.SendMessage(address, content)
     }
 }
 
-fun MessageAction.toTrackerActionDto(): TrackerActionDto {
+fun MessageWrapper.toTrackerActionDto(): TrackerActionDto? {
     return when (this) {
-        is MessageAction.StartTest -> TrackerActionDto.StartTest(address)
-        is MessageAction.StopTest -> TrackerActionDto.StopTest(address)
-        is MessageAction.UpdateProgress -> TrackerActionDto.UpdateProgress(progress)
+        is MessageWrapper.SendMessage -> TrackerActionDto.SendMessage(address, content)
+        else -> {
+            null
+        }
     }
 }

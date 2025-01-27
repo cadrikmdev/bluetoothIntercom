@@ -4,35 +4,49 @@ import com.cadrikmdev.intercom.data.message.TrackerActionDto
 import com.cadrikmdev.intercom.data.message.toTrackerAction
 import com.cadrikmdev.intercom.data.message.toTrackerActionDto
 import com.cadrikmdev.intercom.domain.client.TrackingDevice
+import com.cadrikmdev.intercom.domain.data.TextContent
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
-import com.cadrikmdev.intercom.domain.message.MessageAction
+import com.cadrikmdev.intercom.domain.message.MessageWrapper
+import com.cadrikmdev.intercom.domain.message.SerializableContent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 
 class AndroidMessageProcessor(
 
 ) : MessageProcessor {
 
+    private val _receivedMessageFlow = MutableSharedFlow<MessageWrapper?>()
+    override val receivedMessageFlow: SharedFlow<MessageWrapper?> get() = _receivedMessageFlow
+
     val json = Json {
         serializersModule = SerializersModule {
-            polymorphic(TrackerActionDto::class) {
-                subclass(TrackerActionDto.StartTest::class)
-                subclass(TrackerActionDto.StopTest::class)
-                subclass(TrackerActionDto.UpdateProgress::class)
+            polymorphic(SerializableContent::class) {
+                subclass(TextContent::class, TextContent.serializer())
             }
         }
         classDiscriminator = "type"
         encodeDefaults = true
     }
 
-    override fun processMessage(message: String?): MessageAction? {
+    override suspend fun processMessageFrom(address: String, message: String?): MessageWrapper? {
         try {
-            message?.let { mess ->
-                return json.decodeFromString<TrackerActionDto>(mess).toTrackerAction()
+            val action = message?.let { mess ->
+                json.decodeFromString<TrackerActionDto>(mess).toTrackerAction()
+            }
+            action?.let {
+                CoroutineScope(Dispatchers.IO).launch {
+                    launch(Dispatchers.IO) {
+                        _receivedMessageFlow.emit(action)
+                    }
+                }
             }
         } catch (e: SerializationException) {
             e.printStackTrace()
@@ -42,7 +56,7 @@ class AndroidMessageProcessor(
         return null
     }
 
-    override fun sendAction(action: MessageAction?): String? {
+    override fun sendAction(action: MessageWrapper?): String? {
         try {
             action?.let {
                 return json.encodeToString(it.toTrackerActionDto()) + "\n"

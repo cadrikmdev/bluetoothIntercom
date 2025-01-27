@@ -14,7 +14,7 @@ import com.cadrikmdev.intercom.domain.client.BluetoothError
 import com.cadrikmdev.intercom.domain.client.DeviceType
 import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
-import com.cadrikmdev.intercom.domain.message.MessageAction
+import com.cadrikmdev.intercom.domain.message.MessageWrapper
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,8 +39,8 @@ class AndroidBluetoothClientService(
     private val messageProcessor: MessageProcessor,
 ) : BluetoothClientService {
 
-    override val sendActionFlow: MutableStateFlow<MessageAction?> =
-        MutableStateFlow<MessageAction?>(null)
+    override val sendActionFlow: MutableStateFlow<MessageWrapper?> =
+        MutableStateFlow<MessageWrapper?>(null)
 
     val sendActionJob: Job = sendActionFlow.onEach {
 
@@ -88,12 +88,7 @@ class AndroidBluetoothClientService(
 
         sendActionFlow.onEach { message ->
             // TODO: Inject some message processor
-            val actionDeviceAddress = when (message) {
-                is MessageAction.StartTest -> message.address
-                is MessageAction.StopTest -> message.address
-                is MessageAction.UpdateProgress -> null
-                null -> null
-            }
+            val actionDeviceAddress = message?.destinationAddress
 
             _connections.value.forEach { deviceAddress, socket ->
                 if (deviceAddress == actionDeviceAddress && socket.isConnected) {
@@ -243,10 +238,7 @@ class AndroidBluetoothClientService(
                                 val message = reader.readLine() ?: break
                                 Timber.d("Received: $message")
                                 // Handle the received message
-                                val action = messageProcessor.processMessage(message)
-                                if (action is MessageAction.UpdateProgress) {
-                                    updateStatus(address, action)
-                                }
+                                messageProcessor.processMessageFrom(address, message)
                             }
                         } catch (e: IOException) {
                             Timber.e(e, "Error occurred during receiving data")
@@ -296,10 +288,10 @@ class AndroidBluetoothClientService(
         }
     }
 
-    private fun updateStatus(address: String, updateProgress: MessageAction.UpdateProgress) {
+    private fun updateStatus(address: String, sendMessage: MessageWrapper.SendMessage) {
         val updatedDevice = trackingDevices.value[address]?.copy(
 //            status = updateProgress.progress.state,
-            updateTimestamp = updateProgress.progress.timestamp,
+            updateTimestamp = sendMessage.content.timestamp,
 //            deviceAppVersion = updateProgress.progress.appVersion ?: "",
         )
         updatedDevice?.let {

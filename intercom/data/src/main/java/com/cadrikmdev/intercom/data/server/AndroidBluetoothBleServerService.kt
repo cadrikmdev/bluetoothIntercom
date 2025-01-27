@@ -10,11 +10,11 @@ import android.bluetooth.BluetoothProfile
 import android.content.Context
 import com.cadrikmdev.intercom.data.util.isBluetoothConnectPermissionGranted
 import com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
-import com.cadrikmdev.intercom.domain.ManagerControlServiceProtocol
 import com.cadrikmdev.intercom.domain.data.MessageContent
-import com.cadrikmdev.intercom.domain.data.MeasurementState
+import com.cadrikmdev.intercom.domain.data.TextContent
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
-import com.cadrikmdev.intercom.domain.message.MessageAction
+import com.cadrikmdev.intercom.domain.message.MessageWrapper
+import com.cadrikmdev.intercom.domain.message.SerializableContent
 import com.cadrikmdev.intercom.domain.server.BluetoothServerService
 import com.cadrikmdev.intercom.domain.server.ConnectionState
 import kotlinx.coroutines.CoroutineScope
@@ -42,20 +42,17 @@ class AndroidBluetoothBleServerService(
 
     private val connectedDevices = mutableSetOf<String>()
 
-    private val _receivedActionFlow = MutableSharedFlow<MessageAction?>()
-    override val receivedMessageFlow: SharedFlow<MessageAction?> get() = _receivedActionFlow
-
     private val _connectionStateFlow = MutableSharedFlow<ConnectionState>()
     override val connectionStateFlow: SharedFlow<ConnectionState> get() = _connectionStateFlow
 
-    var getStatusUpdate: () -> MessageContent? = {
+    var getStatusUpdate: () -> MessageContent<SerializableContent>? = {
         MessageContent(
-            content = "Default content",
+            content = TextContent("Simple text content example from BLE server side"),
             timestamp = System.currentTimeMillis()
         )
     }
 
-    override fun setMeasurementProgressCallback(statusUpdate: () -> MessageContent?) {
+    override fun setMeasurementProgressCallback(statusUpdate: () -> MessageContent<SerializableContent>?) {
         this.getStatusUpdate = statusUpdate
     }
 
@@ -137,8 +134,7 @@ class AndroidBluetoothBleServerService(
                 Timber.d("Write request from ${device.address}: $message")
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    val action = messageProcessor.processMessage(message)
-                    _receivedActionFlow.emit(action)
+                    messageProcessor.processMessageFrom(device.address, message)
                 }
 
                 if (responseNeeded) {

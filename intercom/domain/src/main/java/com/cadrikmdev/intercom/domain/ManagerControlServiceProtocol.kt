@@ -2,13 +2,14 @@ package com.cadrikmdev.intercom.domain
 
 import java.util.UUID
 
-class ManagerControlServiceProtocol {
+class ManagerControlServiceProtocol: BluetoothServiceSpecification {
 
-    companion object {
-        val customServiceUUID: UUID =
-            UUID.nameUUIDFromBytes("TrackerManagerControlServiceProtocol".toByteArray())
-        val customCharacteristicServiceUUID: UUID =
-            UUID.nameUUIDFromBytes("TrackerManagerControlServiceCharacteristicProtocol".toByteArray())
+    override fun getBluetoothServiceName(): String {
+        return "TrackerManagerControlServiceProtocol"
+    }
+
+    override fun getServiceCharacteristicUUID(): UUID {
+        return UUID.nameUUIDFromBytes("TrackerManagerControlServiceCharacteristicProtocol".toByteArray())
     }
 
 }

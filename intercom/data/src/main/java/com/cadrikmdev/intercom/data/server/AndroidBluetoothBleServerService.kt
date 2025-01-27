@@ -9,6 +9,7 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.Context
 import com.cadrikmdev.intercom.data.util.isBluetoothConnectPermissionGranted
+import com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
 import com.cadrikmdev.intercom.domain.ManagerControlServiceProtocol
 import com.cadrikmdev.intercom.domain.data.MessageContent
 import com.cadrikmdev.intercom.domain.data.MeasurementState
@@ -27,11 +28,11 @@ import java.util.UUID
 class AndroidBluetoothBleServerService(
     private val context: Context,
     private val messageProcessor: MessageProcessor,
+    private val bluetoothServiceSpecification: BluetoothServiceSpecification
 ) : BluetoothServerService {
 
-    private val serviceUUID: UUID = ManagerControlServiceProtocol.customServiceUUID
-    private val characteristicUUID: UUID =
-        UUID.randomUUID() // Replace with your own characteristic UUID
+    private val serviceUUID: UUID = bluetoothServiceSpecification.getServiceUUID()
+    private val characteristicUUID: UUID = bluetoothServiceSpecification.getServiceCharacteristicUUID()
 
     private val bluetoothManager: BluetoothManager by lazy {
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager

@@ -8,13 +8,15 @@ import android.bluetooth.le.BluetoothLeAdvertiser
 import android.content.Context
 import android.os.ParcelUuid
 import com.cadrikmdev.intercom.data.util.isBluetoothAdvertisePermissionGranted
+import com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
 import com.cadrikmdev.intercom.domain.ManagerControlServiceProtocol
 import com.cadrikmdev.intercom.domain.server.BluetoothAdvertiser
 import timber.log.Timber
 import java.util.UUID
 
 class AndroidBluetoothAdvertiser(
-    private val context: Context
+    private val context: Context,
+    private val bluetoothServiceSpecification: BluetoothServiceSpecification
 ) : BluetoothAdvertiser {
     private val bluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -22,7 +24,7 @@ class AndroidBluetoothAdvertiser(
     private var advertiser: BluetoothLeAdvertiser? = null
 
     // UUID to broadcast
-    private val serviceUUID: UUID = ManagerControlServiceProtocol.customServiceUUID
+    private val serviceUUID: UUID = bluetoothServiceSpecification.getServiceUUID()
 
     override fun startAdvertising() {
         if (bluetoothAdapter?.isEnabled != true) {

@@ -8,7 +8,7 @@ import com.cadrikmdev.intercom.data.client.mappers.toTrackingDevice
 import com.cadrikmdev.intercom.data.util.isBluetoothConnectPermissionGranted
 import com.cadrikmdev.intercom.data.util.isFineLocationPermissionGranted
 import com.cadrikmdev.intercom.domain.BluetoothDevicesProvider
-import com.cadrikmdev.intercom.domain.ManagerControlServiceProtocol
+import com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
 import com.cadrikmdev.intercom.domain.client.BluetoothClientService
 import com.cadrikmdev.intercom.domain.client.BluetoothError
 import com.cadrikmdev.intercom.domain.client.DeviceType
@@ -34,6 +34,7 @@ import java.io.OutputStream
 class AndroidBluetoothClientService(
     private val context: Context,
     private val devicesProvider: BluetoothDevicesProvider<BluetoothDevice>,
+    private val bluetoothSpecificationProvider: BluetoothServiceSpecification,
     private val applicationScope: CoroutineScope,
     private val messageProcessor: MessageProcessor,
 ) : BluetoothClientService {
@@ -158,13 +159,13 @@ class AndroidBluetoothClientService(
         val resultDeferred = CompletableDeferred<com.cadrikmdev.core.domain.util.Result<Boolean, BluetoothError>>()
 
         Timber.d("Connecting to device with address: ${deviceAddress}")
-        Timber.d("Service uuid: ${ManagerControlServiceProtocol.customServiceUUID}")
+        Timber.d("Service uuid: ${bluetoothSpecificationProvider.getServiceUUID()}")
         Timber.d("Connecting to device with supportedServices; ${bluetoothDevice.uuids.forEach { "${it.uuid}, " }}")
-        bluetoothDevice.createRfcommSocketToServiceRecord(ManagerControlServiceProtocol.customServiceUUID)
+        bluetoothDevice.createRfcommSocketToServiceRecord(bluetoothSpecificationProvider.getServiceUUID())
         bluetoothDevice?.let { device ->
             val clientSocket: BluetoothSocket =
                 device.createRfcommSocketToServiceRecord(
-                    ManagerControlServiceProtocol.customServiceUUID
+                    bluetoothSpecificationProvider.getServiceUUID()
                 )
             // Accept connections from clients (running in a separate thread)
             Thread {

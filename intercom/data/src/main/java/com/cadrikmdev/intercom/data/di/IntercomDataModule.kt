@@ -12,6 +12,8 @@ import com.cadrikmdev.intercom.data.server.AndroidBluetoothAdvertiser
 import com.cadrikmdev.intercom.data.server.AndroidBluetoothBleServerService
 import com.cadrikmdev.intercom.data.server.AndroidBluetoothServerService
 import com.cadrikmdev.intercom.domain.BluetoothDevicesProvider
+import com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
+import com.cadrikmdev.intercom.domain.ManagerControlServiceProtocol
 import com.cadrikmdev.intercom.domain.client.BluetoothClientService
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.server.BluetoothAdvertiser
@@ -35,11 +37,13 @@ val intercomDataModule = module {
         AndroidBluetoothServerService(
             get(),
             get(),
+            get(),
         )
     }
 
     single<BluetoothServerService>(named(DI_BLUETOOTH_SERVER_SERVICE_BLE)) {
         AndroidBluetoothBleServerService(
+            get(),
             get(),
             get(),
         )
@@ -50,7 +54,8 @@ val intercomDataModule = module {
             get(),
             get(),
             get(),
-            get()
+            get(),
+            get(),
         )
     }
 
@@ -71,4 +76,5 @@ val intercomDataModule = module {
 
     singleOf(::AndroidBluetoothDevicesProvider).bind<BluetoothDevicesProvider<BluetoothDevice>>()
     singleOf(::AndroidBluetoothService).bind<BluetoothService>()
+    singleOf(::ManagerControlServiceProtocol).bind<BluetoothServiceSpecification>()
 }

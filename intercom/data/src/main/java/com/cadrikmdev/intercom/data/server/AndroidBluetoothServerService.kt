@@ -7,7 +7,7 @@ import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import com.cadrikmdev.intercom.data.util.isBluetoothConnectPermissionGranted
-import com.cadrikmdev.intercom.domain.ManagerControlServiceProtocol
+import com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
 import com.cadrikmdev.intercom.domain.data.MessageContent
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.message.MessageAction
@@ -30,9 +30,10 @@ import java.util.UUID
 class AndroidBluetoothServerService(
     private val context: Context,
     private val messageProcessor: MessageProcessor,
+    private val bluetoothServiceSpecification: BluetoothServiceSpecification
 ) : BluetoothServerService {
 
-    private val serviceUUID: UUID = ManagerControlServiceProtocol.customServiceUUID
+    private val serviceUUID: UUID = bluetoothServiceSpecification.getServiceUUID()
 
     private var bluetoothServerSocket: BluetoothServerSocket? = null
     private var bluetoothSocket: BluetoothSocket? = null

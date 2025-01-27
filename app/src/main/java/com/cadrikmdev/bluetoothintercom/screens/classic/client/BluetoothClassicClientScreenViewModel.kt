@@ -9,6 +9,11 @@ import com.cadrikmdev.intercom.data.client.mappers.toTrackingDevice
 import com.cadrikmdev.intercom.domain.BluetoothDevicesProvider
 import com.cadrikmdev.intercom.domain.client.BluetoothClientService
 import com.cadrikmdev.intercom.domain.client.DeviceType
+import com.cadrikmdev.intercom.domain.data.MessageContent
+import com.cadrikmdev.intercom.domain.data.TextContent
+import com.cadrikmdev.intercom.domain.message.MessageProcessor
+import com.cadrikmdev.intercom.domain.message.MessageWrapper
+import com.cadrikmdev.intercom.domain.message.SerializableContent
 import com.cadrikmdev.intercom.domain.service.BluetoothService
 import com.cadrikmdev.permissions.domain.PermissionHandler
 import kotlinx.coroutines.flow.flatMapConcat
@@ -21,6 +26,7 @@ class BluetoothClassicClientScreenViewModel(
     private val bluetoothClassicClientService: BluetoothClientService,
     private val bluetoothDevicesProvider: BluetoothDevicesProvider<BluetoothDevice>,
     private val androidBluetoothService: BluetoothService,
+    private val messageProcessor: MessageProcessor,
     private val permissionHandler: PermissionHandler,
 ): BaseViewModel() {
 
@@ -45,7 +51,30 @@ class BluetoothClassicClientScreenViewModel(
             BluetoothClassicClientScreenAction.OnOpenBluetoothSettingsClick -> {
                 androidBluetoothService.openBluetoothSettings()
             }
-            is BluetoothClassicClientScreenAction.SendMessageToDevice -> TODO()
+            is BluetoothClassicClientScreenAction.SendMessageToDevice -> {
+                viewModelScope.launch {
+                    when (action.messageToDevice) {
+                        "start" -> bluetoothClassicClientService.sendActionFlow.emit(
+                            MessageWrapper.SendMessage(
+                                address = action.address,
+                                content = MessageContent<SerializableContent>(
+                                    content = TextContent("Start action send from bluetooth classic client view model"),
+                                    timestamp = System.currentTimeMillis()
+                                )
+                            )
+                        )
+                        "stop" -> bluetoothClassicClientService.sendActionFlow.emit(
+                            MessageWrapper.SendMessage(
+                                address = action.address,
+                                content = MessageContent<SerializableContent>(
+                                    content = TextContent("Stop action send from bluetooth classic client view model"),
+                                    timestamp = System.currentTimeMillis()
+                                )
+                            )
+                        )
+                    }
+                }
+            }
         }
     }
 

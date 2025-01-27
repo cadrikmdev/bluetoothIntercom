@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.viewModelScope
 import com.cadrikmdev.bluetoothintercom.base.BaseViewModel
 import com.cadrikmdev.bluetoothintercom.screens.classic.client.state.BluetoothClassicClientScreenStateManager
-import com.cadrikmdev.intercom.data.client.mappers.toTrackingDevice
 import com.cadrikmdev.intercom.domain.BluetoothDevicesProvider
 import com.cadrikmdev.intercom.domain.client.BluetoothClientService
 import com.cadrikmdev.intercom.domain.client.DeviceType
@@ -16,9 +15,7 @@ import com.cadrikmdev.intercom.domain.message.MessageWrapper
 import com.cadrikmdev.intercom.domain.message.SerializableContent
 import com.cadrikmdev.intercom.domain.service.BluetoothService
 import com.cadrikmdev.permissions.domain.PermissionHandler
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 

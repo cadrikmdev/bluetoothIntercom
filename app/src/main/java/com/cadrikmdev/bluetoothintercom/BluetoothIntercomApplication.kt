@@ -1,6 +1,7 @@
 package com.cadrikmdev.bluetoothintercom
 
 import android.app.Application
+import com.cadrikmdev.bluetoothintercom.di.appIntercomModule
 import com.cadrikmdev.bluetoothintercom.di.appModule
 import com.cadrikmdev.bluetoothintercom.permissions.di.permissionHandlerModule
 import com.cadrikmdev.intercom.data.di.intercomDataModule
@@ -29,7 +30,7 @@ class BluetoothIntercomApplication : Application() {
             androidContext(this@BluetoothIntercomApplication)
             workManagerFactory()
             modules(
-                intercomDataModule,
+                appIntercomModule,
                 permissionsModule,
                 permissionHandlerModule,
                 appModule,

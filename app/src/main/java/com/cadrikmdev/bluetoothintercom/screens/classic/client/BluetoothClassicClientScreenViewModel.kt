@@ -11,7 +11,9 @@ import com.cadrikmdev.intercom.domain.client.BluetoothClientService
 import com.cadrikmdev.intercom.domain.client.DeviceType
 import com.cadrikmdev.intercom.domain.service.BluetoothService
 import com.cadrikmdev.permissions.domain.PermissionHandler
+import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -62,11 +64,20 @@ class BluetoothClassicClientScreenViewModel(
 
             val pairedDevicesFlow = bluetoothDevicesProvider.observePairedDevices(DeviceType.WORKER)
 
-            pairedDevicesFlow.onEach { pairedDevices ->
-                stateManager.setPairedDevices(
-                    pairedDevices.values.map { it.toTrackingDevice() }.filterNotNull().toList()
-                )
-            }.launchIn(viewModelScope)
+//            pairedDevicesFlow.onEach { pairedDevices ->
+//                stateManager.setPairedDevices(
+//                    pairedDevices.values.map { it.toTrackingDevice() }.filterNotNull().toList()
+//                )
+//            }.launchIn(viewModelScope)
+
+            bluetoothClassicClientService.trackingDevices
+                .onEach { devices ->
+                    stateManager.setPairedDevices(
+                       devices.values.toList()
+                    )
+                }.launchIn(viewModelScope)
         }
+
+
     }
 }

@@ -30,7 +30,7 @@ import java.util.UUID
 class AndroidBluetoothServerService(
     private val context: Context,
     private val messageProcessor: MessageProcessor,
-    private val bluetoothServiceSpecification: BluetoothServiceSpecification
+    private val bluetoothServiceSpecification: com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
 ) : BluetoothServerService {
 
     private val serviceUUID: UUID = bluetoothServiceSpecification.getServiceUUID()

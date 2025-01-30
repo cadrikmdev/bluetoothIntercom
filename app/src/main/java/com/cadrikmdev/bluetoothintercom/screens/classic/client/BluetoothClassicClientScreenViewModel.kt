@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 
 class BluetoothClassicClientScreenViewModel(
     private val bluetoothClassicClientService: BluetoothClientService,
-    private val bluetoothDevicesProvider: BluetoothDevicesProvider<BluetoothDevice>,
+    private val bluetoothDevicesProvider: com.cadrikmdev.intercom.domain.BluetoothDevicesProvider<BluetoothDevice>,
     private val androidBluetoothService: BluetoothService,
     private val messageProcessor: MessageProcessor,
     private val permissionHandler: PermissionHandler,

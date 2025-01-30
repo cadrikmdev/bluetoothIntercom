@@ -75,8 +75,7 @@ dependencies {
     implementation(projects.core.presentation.designsystem)
     implementation(projects.core.presentation.ui)
 
-    implementation(projects.intercom.domain)
-    implementation(projects.intercom.data)
+    implementation(projects.intercom)
 
     implementation(projects.permissions.domain)
     implementation(projects.permissions.data)

@@ -16,7 +16,7 @@ import java.util.UUID
 
 class AndroidBluetoothAdvertiser(
     private val context: Context,
-    private val bluetoothServiceSpecification: BluetoothServiceSpecification
+    private val bluetoothServiceSpecification: com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
 ) : BluetoothAdvertiser {
     private val bluetoothManager =
         context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager

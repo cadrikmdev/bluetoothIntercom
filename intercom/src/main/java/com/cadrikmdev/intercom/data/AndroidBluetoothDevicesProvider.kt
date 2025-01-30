@@ -25,7 +25,7 @@ class AndroidBluetoothDevicesProvider(
     private val bluetoothAdapter: BluetoothAdapter,
     private val coroutineScope: CoroutineScope,
     val context: Context,
-) : BluetoothDevicesProvider<android.bluetooth.BluetoothDevice> {
+) : com.cadrikmdev.intercom.domain.BluetoothDevicesProvider<android.bluetooth.BluetoothDevice> {
 
     private var _nativePairedDevices =
         MutableStateFlow<Map<String, android.bluetooth.BluetoothDevice>>(emptyMap())

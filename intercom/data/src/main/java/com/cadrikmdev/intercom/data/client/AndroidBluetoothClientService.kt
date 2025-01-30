@@ -15,6 +15,7 @@ import com.cadrikmdev.intercom.domain.client.DeviceType
 import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.message.MessageWrapper
+import com.cadrikmdev.intercom.domain.util.Result
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -139,19 +140,19 @@ class AndroidBluetoothClientService(
         }.launchIn(applicationScope)
     }
 
-    override suspend fun connectToDevice(deviceAddress: String): com.cadrikmdev.core.domain.util.Result<Boolean, BluetoothError> {
+    override suspend fun connectToDevice(deviceAddress: String): Result<Boolean, BluetoothError> {
         // Ensure the location permission is granted (required for Bluetooth discovery from Android M+)
-        if (!context.isFineLocationPermissionGranted()) return com.cadrikmdev.core.domain.util.Result.Error(BluetoothError.NO_FINE_LOCATION_PERMISSIONS)
+        if (!context.isFineLocationPermissionGranted()) return Result.Error(BluetoothError.NO_FINE_LOCATION_PERMISSIONS)
         if (!context.isBluetoothConnectPermissionGranted()) {
-            return com.cadrikmdev.core.domain.util.Result.Error(BluetoothError.MISSING_BLUETOOTH_CONNECT_PERMISSION)
+            return Result.Error(BluetoothError.MISSING_BLUETOOTH_CONNECT_PERMISSION)
         }
 
         val bluetoothDevice =
             devicesProvider.getNativeBluetoothDeviceFromDeviceAddress(deviceAddress)
-            ?: return com.cadrikmdev.core.domain.util.Result.Error(BluetoothError.BLUETOOTH_DEVICE_NOT_FOUND)
+            ?: return Result.Error(BluetoothError.BLUETOOTH_DEVICE_NOT_FOUND)
 
         // Use CompletableDeferred to wait for the result
-        val resultDeferred = CompletableDeferred<com.cadrikmdev.core.domain.util.Result<Boolean, BluetoothError>>()
+        val resultDeferred = CompletableDeferred<Result<Boolean, BluetoothError>>()
 
         Timber.d("Connecting to device with address: ${deviceAddress}")
         Timber.d("Service uuid: ${bluetoothSpecificationProvider.getServiceUUID()}")
@@ -181,7 +182,7 @@ class AndroidBluetoothClientService(
 
             }.start()
         }
-        return com.cadrikmdev.core.domain.util.Result.Success(true)
+        return Result.Success(true)
     }
 
     override fun disconnectFromDevice(deviceAddress: String): Boolean {

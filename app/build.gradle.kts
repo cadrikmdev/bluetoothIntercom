@@ -77,7 +77,6 @@ dependencies {
 
     implementation(projects.intercom.domain)
     implementation(projects.intercom.data)
-    implementation(projects.intercom.presentation)
 
     implementation(projects.permissions.domain)
     implementation(projects.permissions.data)

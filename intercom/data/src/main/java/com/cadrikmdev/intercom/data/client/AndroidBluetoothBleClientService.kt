@@ -17,6 +17,7 @@ import com.cadrikmdev.intercom.domain.client.DeviceType
 import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.message.MessageWrapper
+import com.cadrikmdev.intercom.domain.util.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -60,9 +61,9 @@ class AndroidBluetoothBleClientService(
 
     fun observeConnectedDevices(localDeviceType: DeviceType) = trackingDevices
 
-    override suspend fun connectToDevice(deviceAddress: String): com.cadrikmdev.core.domain.util.Result<Boolean, BluetoothError> {
+    override suspend fun connectToDevice(deviceAddress: String): Result<Boolean, BluetoothError> {
         val device = bluetoothAdapter?.getRemoteDevice(deviceAddress)
-            ?: return com.cadrikmdev.core.domain.util.Result.Error(BluetoothError.BLUETOOTH_DEVICE_NOT_FOUND)
+            ?: return Result.Error(BluetoothError.BLUETOOTH_DEVICE_NOT_FOUND)
 
         return try {
             if (!hasBluetoothConnectPermission()) {
@@ -70,11 +71,11 @@ class AndroidBluetoothBleClientService(
             }
             device.connectGatt(context, false, gattCallback)?.let { gatt ->
                 connectedDevices[deviceAddress] = gatt
-                com.cadrikmdev.core.domain.util.Result.Success(true)
-            } ?: com.cadrikmdev.core.domain.util.Result.Error(BluetoothError.UNABLE_TO_CONNECT)
+                Result.Success(true)
+            } ?: Result.Error(BluetoothError.UNABLE_TO_CONNECT)
         } catch (e: Exception) {
             Timber.e(e, "Error connecting to device $deviceAddress")
-            com.cadrikmdev.core.domain.util.Result.Error(BluetoothError.UNABLE_TO_CONNECT)
+            Result.Error(BluetoothError.UNABLE_TO_CONNECT)
         }
     }
 

@@ -1,6 +1,6 @@
 package com.cadrikmdev.intercom.domain.client
 
-import com.cadrikmdev.core.domain.util.Error
+import com.cadrikmdev.intercom.domain.util.Error
 
 enum class BluetoothError : Error {
     NO_FINE_LOCATION_PERMISSIONS,

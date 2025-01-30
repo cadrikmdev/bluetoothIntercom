@@ -34,5 +34,3 @@ include(":permissions:presentation")
 include(":permissions:data")
 include(":intercom:domain")
 include(":intercom:data")
-include(":intercom:presentation")
-

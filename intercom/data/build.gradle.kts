@@ -35,12 +35,13 @@ android {
 }
 
 dependencies {
+    implementation(project(":intercom:domain"))
+
     implementation(libs.timber)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.ktor)
     implementation(libs.kotlinx.serialization.json)
 
-    implementation(projects.intercom.domain)
     implementation(libs.androidx.core)
 
     implementation(libs.androidx.core.ktx)

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.cadrikmdev.intercom"
+    namespace = "com.cadrikmdev.intercom.data"
 
     compileSdk = 34
 
@@ -35,10 +35,11 @@ android {
 }
 
 dependencies {
+    implementation(project(":intercom:domain"))
+
     implementation(libs.timber)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.ktor)
-    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.androidx.core)

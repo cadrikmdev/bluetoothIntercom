@@ -2,7 +2,7 @@ package com.cadrikmdev.intercom.domain
 
 import java.util.UUID
 
-class ManagerControlServiceProtocol: com.cadrikmdev.intercom.domain.BluetoothServiceSpecification {
+class ManagerControlServiceProtocol: BluetoothServiceSpecification {
 
     override fun getBluetoothServiceName(): String {
         return "TrackerManagerControlServiceProtocol"

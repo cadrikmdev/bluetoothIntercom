@@ -34,8 +34,8 @@ import java.io.OutputStream
 
 class AndroidBluetoothClientService(
     private val context: Context,
-    private val devicesProvider: com.cadrikmdev.intercom.domain.BluetoothDevicesProvider<BluetoothDevice>,
-    private val bluetoothSpecificationProvider: com.cadrikmdev.intercom.domain.BluetoothServiceSpecification,
+    private val devicesProvider: BluetoothDevicesProvider<BluetoothDevice>,
+    private val bluetoothSpecificationProvider: BluetoothServiceSpecification,
     private val applicationScope: CoroutineScope,
     private val messageProcessor: MessageProcessor,
 ) : BluetoothClientService {

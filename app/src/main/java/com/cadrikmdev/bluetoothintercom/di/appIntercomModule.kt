@@ -74,7 +74,7 @@ val appIntercomModule = module {
     singleOf(::AndroidMessageProcessor).bind<MessageProcessor>()
     singleOf(::AndroidBluetoothAdvertiser).bind<BluetoothAdvertiser>()
 
-    singleOf(::AndroidBluetoothDevicesProvider).bind<com.cadrikmdev.intercom.domain.BluetoothDevicesProvider<BluetoothDevice>>()
+    singleOf(::AndroidBluetoothDevicesProvider).bind<BluetoothDevicesProvider<BluetoothDevice>>()
     singleOf(::AndroidBluetoothService).bind<BluetoothService>()
-    singleOf(::AppBluetoothServiceSpecification).bind<com.cadrikmdev.intercom.domain.BluetoothServiceSpecification>()
+    singleOf(::AppBluetoothServiceSpecification).bind<BluetoothServiceSpecification>()
 }

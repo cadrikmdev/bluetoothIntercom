@@ -17,10 +17,11 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.SerializersModuleBuilder
 import kotlinx.serialization.modules.polymorphic
 
 class AndroidMessageProcessor(
-
+    otherSerializers: SerializersModule? = null
 ) : MessageProcessor {
 
     private val _receivedMessageFlow = MutableSharedFlow<MessageWrapper?>()
@@ -28,12 +29,17 @@ class AndroidMessageProcessor(
 
     val json = Json {
         serializersModule = SerializersModule {
-            polymorphic(SerializableContent::class) {
-                subclass(TextContent::class, TextContent.serializer())
-            }
+            basicSerializer()
+            include(otherSerializers ?: SerializersModule {})
         }
         classDiscriminator = "type"
         encodeDefaults = true
+    }
+
+    private fun SerializersModuleBuilder.basicSerializer() {
+        polymorphic(SerializableContent::class) {
+            subclass(TextContent::class, TextContent.serializer())
+        }
     }
 
     override suspend fun processMessageFrom(address: String, message: String?): MessageWrapper? {

@@ -12,8 +12,12 @@ To use this lib you can use the default classes in intercom module, but be sure 
 
 in your settings gradle add those 2 line to make it buildable correctly:
 
+project(":intercom:data").projectDir = file("<imported_project_directory>/intercom/data")
+project(":intercom:domain").projectDir = file("<imported_project_directory>/intercom/domain")
+e.g.
 project(":intercom:data").projectDir = file("bluetoothIntercom/intercom/data")
 project(":intercom:domain").projectDir = file("bluetoothIntercom/intercom/domain")
+if <imported_project_directory> is blueetoothIntercom
 
 then use ":intercom:domain" and ":intercom:domain" to reference it from other models
 

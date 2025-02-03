@@ -1,7 +1,7 @@
 package com.cadrikmdev.intercom.data
 
-import com.cadrikmdev.intercom.data.message.TrackerActionDto
-import com.cadrikmdev.intercom.data.message.toTrackerAction
+import com.cadrikmdev.intercom.data.message.MessageActionDto
+import com.cadrikmdev.intercom.data.message.toMessageAction
 import com.cadrikmdev.intercom.data.message.toTrackerActionDto
 import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import com.cadrikmdev.intercom.domain.data.TextContent
@@ -39,7 +39,7 @@ class AndroidMessageProcessor(
     override suspend fun processMessageFrom(address: String, message: String?): MessageWrapper? {
         try {
             val action = message?.let { mess ->
-                json.decodeFromString<TrackerActionDto>(mess).toTrackerAction()
+                json.decodeFromString<MessageActionDto>(mess).toMessageAction()
             }
             action?.let {
                 CoroutineScope(Dispatchers.IO).launch {

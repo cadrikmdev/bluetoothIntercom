@@ -9,8 +9,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Polymorphic
-sealed class TrackerActionDto {
+sealed class MessageActionDto {
     @Serializable
     @SerialName("SendMessage")
-    data class SendMessage(val address: String, val content: @Contextual MessageContent<SerializableContent>) : TrackerActionDto()
+    data class SendMessage(val address: String, val content: @Contextual MessageContent<SerializableContent>) : MessageActionDto()
 }

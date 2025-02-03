@@ -6,3 +6,15 @@ This project meant to be as a library to maintain mutual code of bluetooth commu
 
 BLE implementation is not ready
 
+## Usage:
+
+To use this lib you can use the default classes in intercom module, but be sure to override following at least: 
+
+in your settings gradle add those 2 line to make it buildable correctly:
+
+project(":intercom:data").projectDir = file("bluetoothIntercom/intercom/data")
+project(":intercom:domain").projectDir = file("bluetoothIntercom/intercom/domain")
+
+then use ":intercom:domain" and ":intercom:domain" to reference it from other models
+
+**BluetoothServiceSpecification** to use your own unique name to recognize the service

@@ -23,13 +23,13 @@ import com.cadrikmdev.bluetoothintercom.R
 import com.cadrikmdev.core.presentation.designsystem.BaseTheme
 import com.cadrikmdev.core.presentation.designsystem.components.BaseActionButton
 import com.cadrikmdev.core.presentation.ui.toLocalTime
-import com.cadrikmdev.intercom.domain.client.TrackingDevice
+import com.cadrikmdev.intercom.domain.data.BluetoothDevice
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 @Composable
 fun ManagedDeviceListItem(
-    trackingDeviceUi: TrackingDevice,
+    connectedBluetoothDeviceUi: BluetoothDevice,
     onStartClick: (address: String) -> Unit,
     onStopClick: (address: String) -> Unit,
     onConnectClick: (address: String) -> Unit,
@@ -52,11 +52,11 @@ fun ManagedDeviceListItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = trackingDeviceUi.name,
+                text = connectedBluetoothDeviceUi.displayName,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = if (trackingDeviceUi.connected) {
+                text = if (connectedBluetoothDeviceUi.connected) {
                     stringResource(id = R.string.connected)
                 } else {
                     stringResource(id = R.string.disconnected)
@@ -73,7 +73,7 @@ fun ManagedDeviceListItem(
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = trackingDeviceUi.updateTimestamp.toDuration(DurationUnit.MILLISECONDS)
+                text = connectedBluetoothDeviceUi.lastUpdatedTimestamp.toDuration(DurationUnit.MILLISECONDS)
                     .toLocalTime().toString() ?: "-",
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -83,7 +83,7 @@ fun ManagedDeviceListItem(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             BaseActionButton(
-                text = if (trackingDeviceUi.connected) {
+                text = if (connectedBluetoothDeviceUi.connected) {
                     stringResource(id = R.string.disconnect)
                 } else {
                     stringResource(id = R.string.connect)
@@ -91,27 +91,27 @@ fun ManagedDeviceListItem(
                 modifier = Modifier.weight(1.5f),
                 isLoading = false
             ) {
-                if (trackingDeviceUi.connected) {
-                    onDisconnectClick(trackingDeviceUi.address)
+                if (connectedBluetoothDeviceUi.connected) {
+                    onDisconnectClick(connectedBluetoothDeviceUi.address)
                 } else {
-                    onConnectClick(trackingDeviceUi.address)
+                    onConnectClick(connectedBluetoothDeviceUi.address)
                 }
             }
             BaseActionButton(
                 text = stringResource(id = R.string.start),
                 modifier = Modifier.weight(1f),
-                enabled = (trackingDeviceUi.connected),
+                enabled = (connectedBluetoothDeviceUi.connected),
                 isLoading = false
             ) {
-                onStartClick(trackingDeviceUi.address)
+                onStartClick(connectedBluetoothDeviceUi.address)
             }
             BaseActionButton(
                 text = stringResource(id = R.string.stop),
                 modifier = Modifier.weight(1f),
-                enabled = (trackingDeviceUi.connected),
+                enabled = (connectedBluetoothDeviceUi.connected),
                 isLoading = false
             ) {
-                onStopClick(trackingDeviceUi.address)
+                onStopClick(connectedBluetoothDeviceUi.address)
             }
         }
     }
@@ -122,11 +122,11 @@ fun ManagedDeviceListItem(
 private fun RunListItemPreview() {
     BaseTheme {
         ManagedDeviceListItem(
-            trackingDeviceUi = TrackingDevice(
-                name = "Telephone model name",
+            connectedBluetoothDeviceUi = BluetoothDevice(
+                displayName = "Telephone model name",
                 address = "47:51:53:55:88:56:FE",
                 connected = false,
-                updateTimestamp = 15616561513
+                lastUpdatedTimestamp = 15616561513
             ),
             onStartClick = { },
             onStopClick = { },

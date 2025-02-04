@@ -71,7 +71,11 @@ val appIntercomModule = module {
 
     single { androidApplication().getSystemService<BluetoothManager>()?.adapter }
 
-    singleOf(::AndroidMessageProcessor).bind<MessageProcessor>()
+    single<MessageProcessor> {
+        AndroidMessageProcessor(
+            null
+        )
+    }
     singleOf(::AndroidBluetoothAdvertiser).bind<BluetoothAdvertiser>()
 
     singleOf(::AndroidBluetoothDevicesProvider).bind<BluetoothDevicesProvider<BluetoothDevice>>()

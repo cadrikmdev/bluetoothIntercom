@@ -96,7 +96,7 @@ class BluetoothClassicClientScreenViewModel(
 //                )
 //            }.launchIn(viewModelScope)
 
-            bluetoothClassicClientService.trackingDevices
+            bluetoothClassicClientService.connectedBluetoothDevices
                 .onEach { devices ->
                     stateManager.setPairedDevices(
                        devices.values.toList()

@@ -1,6 +1,6 @@
 package com.cadrikmdev.intercom.domain.message
 
-import com.cadrikmdev.intercom.domain.client.TrackingDevice
+import com.cadrikmdev.intercom.domain.data.BluetoothDevice
 import kotlinx.coroutines.flow.SharedFlow
 
 interface MessageProcessor {
@@ -10,5 +10,5 @@ interface MessageProcessor {
 
     fun sendAction(action: MessageWrapper?): String?
 
-    fun processConnectedDevice(name: String?, address: String): TrackingDevice
+    fun processConnectedDevice(name: String?, address: String): BluetoothDevice
 }

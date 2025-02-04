@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat
 import com.cadrikmdev.intercom.domain.client.BluetoothClientService
 import com.cadrikmdev.intercom.domain.client.BluetoothError
 import com.cadrikmdev.intercom.domain.client.DeviceType
-import com.cadrikmdev.intercom.domain.client.TrackingDevice
+import com.cadrikmdev.intercom.domain.data.BluetoothDevice
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.message.MessageWrapper
 import com.cadrikmdev.intercom.domain.util.Result
@@ -32,7 +32,7 @@ class AndroidBluetoothBleClientService(
     override val sendActionFlow: MutableStateFlow<MessageWrapper?> =
         MutableStateFlow<MessageWrapper?>(null)
 
-    override val trackingDevices = MutableStateFlow<Map<String, TrackingDevice>>(mapOf())
+    override val connectedBluetoothDevices = MutableStateFlow<Map<String, BluetoothDevice>>(mapOf())
     private val bluetoothAdapter: BluetoothAdapter? by lazy {
         (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
     }
@@ -49,7 +49,7 @@ class AndroidBluetoothBleClientService(
 
                 val deviceInfo =  messageProcessor.processConnectedDevice(device.name, device.address)
                 applicationScope.launch {
-                    trackingDevices.emit(trackingDevices.value + (device.address to deviceInfo))
+                    connectedBluetoothDevices.emit(connectedBluetoothDevices.value + (device.address to deviceInfo))
                 }
             }
         }
@@ -59,7 +59,7 @@ class AndroidBluetoothBleClientService(
         }
     }
 
-    fun observeConnectedDevices(localDeviceType: DeviceType) = trackingDevices
+    fun observeConnectedDevices(localDeviceType: DeviceType) = connectedBluetoothDevices
 
     override suspend fun connectToDevice(deviceAddress: String): Result<Boolean, BluetoothError> {
         val device = bluetoothAdapter?.getRemoteDevice(deviceAddress)
@@ -83,10 +83,10 @@ class AndroidBluetoothBleClientService(
         connectedDevices[deviceAddress]?.close()
         connectedDevices.remove(deviceAddress)
         applicationScope.launch {
-            val updatedDevices = trackingDevices.value.mapValues {
+            val updatedDevices = connectedBluetoothDevices.value.mapValues {
                 if (it.key == deviceAddress) it.value.copy(connected = false) else it.value
             }
-            trackingDevices.emit(updatedDevices)
+            connectedBluetoothDevices.emit(updatedDevices)
         }
         return true
     }
@@ -155,10 +155,10 @@ class AndroidBluetoothBleClientService(
 
     private fun updateStatus(address: String, connected: Boolean) {
         applicationScope.launch {
-            val updatedDevices = trackingDevices.value.mapValues {
+            val updatedDevices = connectedBluetoothDevices.value.mapValues {
                 if (it.key == address) it.value.copy(connected = connected) else it.value
             }
-            trackingDevices.emit(updatedDevices)
+            connectedBluetoothDevices.emit(updatedDevices)
         }
     }
 

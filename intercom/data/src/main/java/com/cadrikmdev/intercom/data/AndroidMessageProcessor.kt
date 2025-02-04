@@ -3,7 +3,7 @@ package com.cadrikmdev.intercom.data
 import com.cadrikmdev.intercom.data.message.MessageActionDto
 import com.cadrikmdev.intercom.data.message.toMessageAction
 import com.cadrikmdev.intercom.data.message.toMessageActionDto
-import com.cadrikmdev.intercom.domain.client.TrackingDevice
+import com.cadrikmdev.intercom.domain.data.BluetoothDevice
 import com.cadrikmdev.intercom.domain.data.TextContent
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.message.MessageWrapper
@@ -75,12 +75,12 @@ class AndroidMessageProcessor(
         return null
     }
 
-    override fun processConnectedDevice(name: String?, address: String): TrackingDevice {
-        return TrackingDevice(
+    override fun processConnectedDevice(name: String?, address: String): BluetoothDevice {
+        return BluetoothDevice(
             address = address,
-            name = name ?: "Unknown",
+            displayName = name ?: "Unknown",
             connected = false,
-            updateTimestamp = System.currentTimeMillis(),
+            lastUpdatedTimestamp = System.currentTimeMillis(),
         )
     }
 }

@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
-import com.cadrikmdev.intercom.data.client.mappers.toTrackingDevice
 import com.cadrikmdev.intercom.data.util.isBluetoothConnectPermissionGranted
 import com.cadrikmdev.intercom.data.util.isFineLocationPermissionGranted
 import com.cadrikmdev.intercom.domain.BluetoothDevicesProvider
@@ -12,7 +11,6 @@ import com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
 import com.cadrikmdev.intercom.domain.client.BluetoothClientService
 import com.cadrikmdev.intercom.domain.client.BluetoothError
 import com.cadrikmdev.intercom.domain.client.DeviceType
-import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
 import com.cadrikmdev.intercom.domain.message.MessageWrapper
 import com.cadrikmdev.intercom.domain.util.Result
@@ -49,7 +47,7 @@ class AndroidBluetoothClientService(
         applicationScope
     )
 
-    override val trackingDevices = MutableStateFlow<Map<String, TrackingDevice>>(mapOf())
+    override val connectedBluetoothDevices = MutableStateFlow<Map<String, com.cadrikmdev.intercom.domain.data.BluetoothDevice>>(mapOf())
 
     private var _pairedDevices = MutableStateFlow<Set<BluetoothDevice>>(setOf())
     val pairedDevices = _pairedDevices.asStateFlow()
@@ -78,13 +76,10 @@ class AndroidBluetoothClientService(
 
         devicesProvider.pairedDevices.onEach { devices ->
             val trackDevices = devices.values
-                .mapNotNull {
-                    it.toTrackingDevice()
-                }
                 .associateBy { it.address }
                 .toMap()
 
-            trackingDevices.emit(trackDevices)
+            connectedBluetoothDevices.emit(trackDevices)
         }.launchIn(applicationScope + Dispatchers.IO)
 
         sendActionFlow.onEach { message ->
@@ -209,15 +204,15 @@ class AndroidBluetoothClientService(
     private fun manageConnectedSocket(socket: BluetoothSocket) {
         // Implement logic for communication with the connected server
         _connections.value = _connections.value.plus(Pair(socket.remoteDevice.address, socket))
-        val connectedDevice = trackingDevices.value[socket.remoteDevice.address]?.copy(
+        val connectedDevice = connectedBluetoothDevices.value[socket.remoteDevice.address]?.copy(
             connected = true
         )
         connectedDevice?.let {
-            val tmpTrackingDevices = trackingDevices.value.toMutableMap()
+            val tmpTrackingDevices = connectedBluetoothDevices.value.toMutableMap()
             tmpTrackingDevices[socket.remoteDevice.address] = it
             // Coroutine for receiving data
             CoroutineScope(Dispatchers.IO).launch {
-                trackingDevices.emit(tmpTrackingDevices)
+                connectedBluetoothDevices.emit(tmpTrackingDevices)
             }
         }
 
@@ -290,33 +285,33 @@ class AndroidBluetoothClientService(
     }
 
     private fun updateStatus(address: String, sendMessage: MessageWrapper.SendMessage) {
-        val updatedDevice = trackingDevices.value[address]?.copy(
+        val updatedDevice = connectedBluetoothDevices.value[address]?.copy(
 //            status = updateProgress.progress.state,
-            updateTimestamp = sendMessage.content.timestamp,
+            lastUpdatedTimestamp = sendMessage.content.timestamp,
 //            deviceAppVersion = updateProgress.progress.appVersion ?: "",
         )
         updatedDevice?.let {
-            val tmpTrackingDevices = trackingDevices.value.toMutableMap()
+            val tmpTrackingDevices = connectedBluetoothDevices.value.toMutableMap()
             tmpTrackingDevices[address] = it
             // Coroutine for receiving data
             CoroutineScope(Dispatchers.IO).launch {
-                trackingDevices.emit(tmpTrackingDevices)
+                connectedBluetoothDevices.emit(tmpTrackingDevices)
             }
         }
     }
 
     private fun markDeviceDisconnected(address: String) {
-        val connectedDevice = trackingDevices.value[address]?.copy(
+        val connectedDevice = connectedBluetoothDevices.value[address]?.copy(
             connected = false,
 //            status = MeasurementState.UNKNOWN,
-            updateTimestamp = System.currentTimeMillis()
+            lastUpdatedTimestamp = System.currentTimeMillis()
         )
         connectedDevice?.let {
-            val tmpTrackingDevices = trackingDevices.value.toMutableMap()
+            val tmpTrackingDevices = connectedBluetoothDevices.value.toMutableMap()
             tmpTrackingDevices[address] = it
             // Coroutine for receiving data
             CoroutineScope(Dispatchers.IO).launch {
-                trackingDevices.emit(tmpTrackingDevices)
+                connectedBluetoothDevices.emit(tmpTrackingDevices)
             }
         }
     }

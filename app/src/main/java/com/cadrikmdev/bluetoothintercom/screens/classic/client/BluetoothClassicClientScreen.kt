@@ -30,7 +30,7 @@ import com.cadrikmdev.bluetoothintercom.screens.classic.client.state.BluetoothCl
 import com.cadrikmdev.bluetoothintercom.ui.ManagedDeviceListItem
 import com.cadrikmdev.core.presentation.designsystem.BaseTheme
 import com.cadrikmdev.core.presentation.designsystem.components.BaseOutlinedActionButton
-import com.cadrikmdev.intercom.domain.client.TrackingDevice
+import com.cadrikmdev.intercom.domain.data.BluetoothDevice
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -127,7 +127,7 @@ fun BluetoothClassicClientScreen(
                                 }
                             ) {
                                 ManagedDeviceListItem(
-                                    trackingDeviceUi = it,
+                                    connectedBluetoothDeviceUi = it,
                                     onStopClick = { address ->
                                         onAction(
                                             BluetoothClassicClientScreenAction.SendMessageToDevice(
@@ -175,7 +175,7 @@ private fun previewBluetoothClassicClientScreen() {
       state = BluetoothClassicClientScreenState(
           isBluetoothAdapterEnabled = true,
           listOf(
-            TrackingDevice(name = "Pixel 5", connected = true, updateTimestamp = System.currentTimeMillis(), address = "00:00:00:00:00:00:00")
+            BluetoothDevice(displayName = "Pixel 5", connected = true, lastUpdatedTimestamp = System.currentTimeMillis(), address = "00:00:00:00:00:00:00")
           ),
     ),
         onAction = {},

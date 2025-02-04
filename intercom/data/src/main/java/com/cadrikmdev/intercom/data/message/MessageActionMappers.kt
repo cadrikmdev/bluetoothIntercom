@@ -8,7 +8,7 @@ fun MessageActionDto.toMessageAction(): MessageWrapper {
     }
 }
 
-fun MessageWrapper.toTrackerActionDto(): MessageActionDto? {
+fun MessageWrapper.toMessageActionDto(): MessageActionDto? {
     return when (this) {
         is MessageWrapper.SendMessage -> MessageActionDto.SendMessage(address, content)
         else -> {

@@ -2,7 +2,7 @@ package com.cadrikmdev.intercom.data
 
 import com.cadrikmdev.intercom.data.message.MessageActionDto
 import com.cadrikmdev.intercom.data.message.toMessageAction
-import com.cadrikmdev.intercom.data.message.toTrackerActionDto
+import com.cadrikmdev.intercom.data.message.toMessageActionDto
 import com.cadrikmdev.intercom.domain.client.TrackingDevice
 import com.cadrikmdev.intercom.domain.data.TextContent
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
@@ -65,7 +65,7 @@ class AndroidMessageProcessor(
     override fun sendAction(action: MessageWrapper?): String? {
         try {
             action?.let {
-                return json.encodeToString(it.toTrackerActionDto()) + "\n"
+                return json.encodeToString(it.toMessageActionDto()) + "\n"
             }
         } catch (e: SerializationException) {
             e.printStackTrace()

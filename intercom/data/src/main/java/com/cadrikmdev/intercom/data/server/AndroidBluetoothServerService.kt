@@ -29,7 +29,6 @@ import java.util.UUID
 
 class AndroidBluetoothServerService(
     private val context: Context,
-    private val coroutineScope: CoroutineScope,
     private val messageProcessor: MessageProcessor,
     private val bluetoothServiceSpecification: BluetoothServiceSpecification
 ) : BluetoothServerService {

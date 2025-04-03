@@ -38,6 +38,7 @@ val intercomDataModule = module {
             get(),
             get(),
             get(),
+            get(),
         )
     }
 

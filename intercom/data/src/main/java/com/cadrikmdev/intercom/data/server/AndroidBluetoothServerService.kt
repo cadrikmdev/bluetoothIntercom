@@ -29,6 +29,7 @@ import java.util.UUID
 
 class AndroidBluetoothServerService(
     private val context: Context,
+    private val coroutineScope: CoroutineScope,
     private val messageProcessor: MessageProcessor,
     private val bluetoothServiceSpecification: BluetoothServiceSpecification
 ) : BluetoothServerService {
@@ -39,6 +40,9 @@ class AndroidBluetoothServerService(
     private var bluetoothSocket: BluetoothSocket? = null
     private var gattServer: BluetoothGattServer? = null
     private var bluetoothAdapter: BluetoothAdapter? = null
+
+    private val _connectionStateFlow = MutableStateFlow<ConnectionState>(ConnectionState.STOPPED)
+    override val connectionStateFlow: StateFlow<ConnectionState> get() = _connectionStateFlow
 
     var getStatusUpdate: () -> MessageContent<SerializableContent>? = {
         MessageContent(
@@ -52,9 +56,6 @@ class AndroidBluetoothServerService(
             _connectionStateFlow.emit(ConnectionState.STOPPED)
         }
     }
-
-    private val _connectionStateFlow = MutableStateFlow<ConnectionState>(ConnectionState.STOPPED)
-    override val connectionStateFlow: StateFlow<ConnectionState> get() = _connectionStateFlow
 
     override fun setMeasurementProgressCallback(statusUpdate: () -> MessageContent<SerializableContent>?) {
         this.getStatusUpdate = statusUpdate

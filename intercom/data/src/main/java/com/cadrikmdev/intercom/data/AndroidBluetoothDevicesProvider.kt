@@ -131,7 +131,7 @@ class AndroidBluetoothDevicesProvider(
                         intent.getParcelableExtra(android.bluetooth.BluetoothDevice.EXTRA_DEVICE)
                     device?.let {
                         // Process each discovered device
-                        Timber.d("Found device: ${it.name} - ${it.address}")
+                        Timber.d("Found device: ${it.toBluetoothDevice()?.displayName} - ${it.address}")
                         if (nativePairedDevices.value.containsKey(it.address)) {
                             _nativeNearbyUnpairedDevices.update { currentMap ->
                                 currentMap + (it.address to it)
@@ -142,7 +142,7 @@ class AndroidBluetoothDevicesProvider(
                                     currentMap + (it.address to it)
                                 }
                             }
-                            Timber.d("Paired device in range: ${it.name} - ${it.address}")
+                            Timber.d("Paired device in range: ${it.toBluetoothDevice()?.displayName} - ${it.address}")
                         }
                     }
                 }

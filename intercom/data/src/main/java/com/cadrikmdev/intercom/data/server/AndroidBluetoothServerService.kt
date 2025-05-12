@@ -6,8 +6,10 @@ import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothServerSocket
 import android.bluetooth.BluetoothSocket
 import android.content.Context
+import com.cadrikmdev.intercom.data.client.mappers.toBluetoothDevice
 import com.cadrikmdev.intercom.data.util.isBluetoothConnectPermissionGranted
 import com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
+import com.cadrikmdev.intercom.domain.data.BluetoothDevice
 import com.cadrikmdev.intercom.domain.data.MessageContent
 import com.cadrikmdev.intercom.domain.data.TextContent
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
@@ -128,7 +130,8 @@ class AndroidBluetoothServerService(
             val inputStream = socket.inputStream
             val outputStream = socket.outputStream
             val reader = inputStream.bufferedReader()
-            val address = socket.remoteDevice.address
+            val remoteDevice = socket.remoteDevice
+            val localDevice = BluetoothDevice(displayName = "local", address = "")
 
             try {
                 // Using supervisorScope to manage child coroutines
@@ -138,9 +141,12 @@ class AndroidBluetoothServerService(
                         try {
                             while (isActive) {
                                 val message = reader.readLine() ?: break
-                                Timber.d("Received: $message")
+                                Timber.d("Received from client: $message")
                                 // Handle the received message
-                                val action = messageProcessor.processMessageFrom(address, message)
+                                val remoteDevice = remoteDevice.toBluetoothDevice()
+                                val action = remoteDevice?.let { bluetoothDevice ->
+                                    messageProcessor.processMessageFrom(bluetoothDevice, message)
+                                }
 
                             }
                         } catch (e: IOException) {
@@ -158,7 +164,7 @@ class AndroidBluetoothServerService(
                                 val message = getStatusUpdate()
                                 message?.let {
                                     val encodedMessage = messageProcessor.sendAction(
-                                        MessageWrapper.SendMessage(address = "", content = it)
+                                        MessageWrapper.SendMessage(sourceDevice = localDevice, content = it)
                                     )
                                     Timber.d("Sending: $encodedMessage")
                                     val byteArray = encodedMessage?.toByteArray()

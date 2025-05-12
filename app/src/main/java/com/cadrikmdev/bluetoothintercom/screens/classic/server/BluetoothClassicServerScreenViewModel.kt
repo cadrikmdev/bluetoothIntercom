@@ -61,8 +61,14 @@ class BluetoothClassicServerScreenViewModel(
             bluetoothClassicIntercomServer.startServer()
             bluetoothClassicIntercomServer.setMeasurementProgressCallback {
                 MessageContent(
+//                    content = MeasurementProgressContent(
+//                        state = extractState(trackData.value),
+//                        errors = extractErrors(trackData.value),
+//                        timestamp = System.currentTimeMillis(),
+//                        appVersion = packageInfoProvider.versionName
+//                    ),
                     content = TextContent("Sample message from bluetooth classic server view model"),
-                    timestamp = System.currentTimeMillis(),
+                    timestamp = System.currentTimeMillis()
                 )
             }
 //            bluetoothClassicIntercomServer.receivedMessageFlow.onEach { action ->

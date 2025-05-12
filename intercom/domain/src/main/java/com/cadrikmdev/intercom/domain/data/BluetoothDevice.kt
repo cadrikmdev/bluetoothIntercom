@@ -9,7 +9,7 @@ data class BluetoothDevice(
     val connected: Boolean = false,
     val lastUpdatedTimestamp: Long = System.currentTimeMillis(),
 ) {
-    fun isTheSameDevice(otherDevice: BluetoothDevice): Boolean {
-        return this.address == otherDevice.address
+    fun isTheSameDevice(otherDevice: BluetoothDevice?): Boolean {
+        return this.address == otherDevice?.address
     }
 }

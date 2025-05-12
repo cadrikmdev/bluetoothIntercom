@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.Context
+import com.cadrikmdev.intercom.data.client.mappers.toBluetoothDevice
 import com.cadrikmdev.intercom.data.util.isBluetoothConnectPermissionGranted
 import com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
 import com.cadrikmdev.intercom.domain.data.MessageContent
@@ -134,7 +135,10 @@ class AndroidBluetoothBleServerService(
                 Timber.d("Write request from ${device.address}: $message")
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    messageProcessor.processMessageFrom(device.address, message)
+                    val bluetoothDevice = device.toBluetoothDevice()
+                    bluetoothDevice?.let {bluetoothDevice ->
+                        messageProcessor.processMessageFrom(bluetoothDevice, message)
+                    }
                 }
 
                 if (responseNeeded) {

@@ -42,10 +42,10 @@ class AndroidMessageProcessor(
         }
     }
 
-    override suspend fun processMessageFrom(address: String, message: String?): MessageWrapper? {
+    override suspend fun processMessageFrom(device: BluetoothDevice, message: String?): MessageWrapper? {
         try {
             val action = message?.let { mess ->
-                json.decodeFromString<MessageActionDto>(mess).toMessageAction()
+                json.decodeFromString<MessageActionDto>(mess).toMessageAction(device)
             }
             action?.let {
                 CoroutineScope(Dispatchers.IO).launch {
@@ -54,6 +54,7 @@ class AndroidMessageProcessor(
                     }
                 }
             }
+            return action
         } catch (e: SerializationException) {
             e.printStackTrace()
         } catch (e: IllegalArgumentException) {

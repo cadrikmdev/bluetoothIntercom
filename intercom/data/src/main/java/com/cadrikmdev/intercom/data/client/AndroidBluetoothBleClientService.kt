@@ -29,10 +29,13 @@ class AndroidBluetoothBleClientService(
     private val messageProcessor: MessageProcessor,
 ) : BluetoothClientService {
 
+    override val receivedActionFlow: MutableStateFlow<MessageWrapper?> =
+        MutableStateFlow<MessageWrapper?>(null)
+
     override val sendActionFlow: MutableStateFlow<MessageWrapper?> =
         MutableStateFlow<MessageWrapper?>(null)
 
-    override val connectedBluetoothDevices = MutableStateFlow<Map<String, BluetoothDevice>>(mapOf())
+    override val pairedBluetoothDevices = MutableStateFlow<Map<String, BluetoothDevice>>(mapOf())
     private val bluetoothAdapter: BluetoothAdapter? by lazy {
         (context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager)?.adapter
     }
@@ -49,7 +52,7 @@ class AndroidBluetoothBleClientService(
 
                 val deviceInfo =  messageProcessor.processConnectedDevice(device.name, device.address)
                 applicationScope.launch {
-                    connectedBluetoothDevices.emit(connectedBluetoothDevices.value + (device.address to deviceInfo))
+                    pairedBluetoothDevices.emit(pairedBluetoothDevices.value + (device.address to deviceInfo))
                 }
             }
         }
@@ -59,7 +62,7 @@ class AndroidBluetoothBleClientService(
         }
     }
 
-    fun observeConnectedDevices(localDeviceType: DeviceType) = connectedBluetoothDevices
+    fun observeConnectedDevices(localDeviceType: DeviceType) = pairedBluetoothDevices
 
     override suspend fun connectToDevice(deviceAddress: String): Result<Boolean, BluetoothError> {
         val device = bluetoothAdapter?.getRemoteDevice(deviceAddress)
@@ -83,10 +86,10 @@ class AndroidBluetoothBleClientService(
         connectedDevices[deviceAddress]?.close()
         connectedDevices.remove(deviceAddress)
         applicationScope.launch {
-            val updatedDevices = connectedBluetoothDevices.value.mapValues {
+            val updatedDevices = pairedBluetoothDevices.value.mapValues {
                 if (it.key == deviceAddress) it.value.copy(connected = false) else it.value
             }
-            connectedBluetoothDevices.emit(updatedDevices)
+            pairedBluetoothDevices.emit(updatedDevices)
         }
         return true
     }
@@ -155,10 +158,10 @@ class AndroidBluetoothBleClientService(
 
     private fun updateStatus(address: String, connected: Boolean) {
         applicationScope.launch {
-            val updatedDevices = connectedBluetoothDevices.value.mapValues {
+            val updatedDevices = pairedBluetoothDevices.value.mapValues {
                 if (it.key == address) it.value.copy(connected = connected) else it.value
             }
-            connectedBluetoothDevices.emit(updatedDevices)
+            pairedBluetoothDevices.emit(updatedDevices)
         }
     }
 

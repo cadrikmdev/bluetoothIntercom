@@ -4,6 +4,10 @@ import android.Manifest
 import android.bluetooth.BluetoothDevice
 import androidx.lifecycle.viewModelScope
 import com.cadrikmdev.bluetoothintercom.base.BaseViewModel
+import com.cadrikmdev.bluetoothintercom.intercom.IntercomAction
+import com.cadrikmdev.bluetoothintercom.intercom.StartContent
+import com.cadrikmdev.bluetoothintercom.intercom.StopContent
+import com.cadrikmdev.bluetoothintercom.screens.classic.client.model.BluetoothDeviceState
 import com.cadrikmdev.bluetoothintercom.screens.classic.client.state.BluetoothClassicClientScreenStateManager
 import com.cadrikmdev.intercom.domain.BluetoothDevicesProvider
 import com.cadrikmdev.intercom.domain.client.BluetoothClientService
@@ -18,6 +22,7 @@ import com.cadrikmdev.permissions.domain.PermissionHandler
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.w3c.dom.Text
 
 class BluetoothClassicClientScreenViewModel(
     private val bluetoothClassicClientService: BluetoothClientService,
@@ -53,18 +58,18 @@ class BluetoothClassicClientScreenViewModel(
                     when (action.messageToDevice) {
                         "start" -> bluetoothClassicClientService.sendActionFlow.emit(
                             MessageWrapper.SendMessage(
-                                address = action.address,
+                                sourceDevice = com.cadrikmdev.intercom.domain.data.BluetoothDevice("", address = action.address),
                                 content = MessageContent<SerializableContent>(
-                                    content = TextContent("Start action send from bluetooth classic client view model"),
+                                    content = StartContent,
                                     timestamp = System.currentTimeMillis()
                                 )
                             )
                         )
                         "stop" -> bluetoothClassicClientService.sendActionFlow.emit(
                             MessageWrapper.SendMessage(
-                                address = action.address,
+                                sourceDevice = com.cadrikmdev.intercom.domain.data.BluetoothDevice("", address = action.address),
                                 content = MessageContent<SerializableContent>(
-                                    content = TextContent("Stop action send from bluetooth classic client view model"),
+                                    content = StopContent,
                                     timestamp = System.currentTimeMillis()
                                 )
                             )
@@ -96,7 +101,34 @@ class BluetoothClassicClientScreenViewModel(
 //                )
 //            }.launchIn(viewModelScope)
 
-            bluetoothClassicClientService.connectedBluetoothDevices
+            messageProcessor.receivedMessageFlow.onEach { message ->
+                val receivedMessage = message as MessageWrapper.SendMessage
+                val content = receivedMessage.content.content
+                val timestamp = receivedMessage.content.timestamp
+                when (content) {
+                    is TextContent -> {
+                        stateManager.getDeviceState(receivedMessage.sourceDevice)
+                        stateManager.updateDeviceState(
+//                            BluetoothDeviceState(
+//                                bluetoothDevice = receivedMessage.sourceDevice,
+//
+//
+//                            )
+                        )
+                    }
+                    is StartContent -> {
+
+                    }
+                    is StopContent -> {
+
+                    }
+                    else -> {
+                        println("Unable to react to message - unimplemented")
+                    }
+                }
+            }
+
+            bluetoothClassicClientService.pairedBluetoothDevices
                 .onEach { devices ->
                     stateManager.setPairedDevices(
                        devices.values.toList()

@@ -5,6 +5,8 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import androidx.core.content.getSystemService
 import com.cadrikmdev.bluetoothintercom.intercom.AppBluetoothServiceSpecification
+import com.cadrikmdev.bluetoothintercom.intercom.StartContent
+import com.cadrikmdev.bluetoothintercom.intercom.StopContent
 import com.cadrikmdev.intercom.data.AndroidBluetoothDevicesProvider
 import com.cadrikmdev.intercom.data.AndroidMessageProcessor
 import com.cadrikmdev.intercom.data.client.AndroidBluetoothBleClientService
@@ -16,9 +18,12 @@ import com.cadrikmdev.intercom.domain.BluetoothDevicesProvider
 import com.cadrikmdev.intercom.domain.BluetoothServiceSpecification
 import com.cadrikmdev.intercom.domain.client.BluetoothClientService
 import com.cadrikmdev.intercom.domain.message.MessageProcessor
+import com.cadrikmdev.intercom.domain.message.SerializableContent
 import com.cadrikmdev.intercom.domain.server.BluetoothAdvertiser
 import com.cadrikmdev.intercom.domain.server.BluetoothServerService
 import com.cadrikmdev.intercom.domain.service.BluetoothService
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import org.koin.android.ext.koin.androidApplication
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
@@ -73,7 +78,18 @@ val appIntercomModule = module {
 
     single<MessageProcessor> {
         AndroidMessageProcessor(
-            null
+            otherSerializers = SerializersModule {
+                polymorphic(SerializableContent::class) {
+                    subclass(
+                        StartContent::class,
+                        StartContent.serializer()
+                    )
+                    subclass(
+                        StopContent::class,
+                        StopContent.serializer()
+                    )
+                }
+            }
         )
     }
     singleOf(::AndroidBluetoothAdvertiser).bind<BluetoothAdvertiser>()

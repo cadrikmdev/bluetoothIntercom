@@ -8,6 +8,8 @@ BLE implementation is not ready
 
 ## Usage:
 
+Create empty 'local.properties' file in root of the module 
+
 To use this lib you can use the default classes in intercom module, but be sure to override following at least: 
 
 in your settings gradle add those 2 line to make it buildable correctly:
@@ -17,7 +19,7 @@ project(":intercom:domain").projectDir = file("<imported_project_directory>/inte
 e.g.
 project(":intercom:data").projectDir = file("bluetoothIntercom/intercom/data")
 project(":intercom:domain").projectDir = file("bluetoothIntercom/intercom/domain")
-if <imported_project_directory> is blueetoothIntercom
+if <imported_project_directory> is bluetoothIntercom
 
 then use ":intercom:domain" and ":intercom:domain" to reference it from other models
 

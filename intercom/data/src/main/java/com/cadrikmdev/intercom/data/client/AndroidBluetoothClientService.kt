@@ -154,7 +154,7 @@ class AndroidBluetoothClientService(
 
         Timber.d("Connecting to device with address: ${deviceAddress}")
         Timber.d("Service uuid: ${bluetoothSpecificationProvider.getServiceUUID()}")
-        Timber.d("Connecting to device with supportedServices; ${bluetoothDevice.uuids.forEach { "${it.uuid}, " }}")
+//        Timber.d("Connecting to device with supportedServices; ${bluetoothDevice.uuids.forEach { "${it.uuid}, " }}")
         bluetoothDevice.createRfcommSocketToServiceRecord(bluetoothSpecificationProvider.getServiceUUID())
         bluetoothDevice?.let { device ->
             val clientSocket: BluetoothSocket =

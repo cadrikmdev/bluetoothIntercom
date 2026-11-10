@@ -1,25 +1,64 @@
 package com.cadrikmdev.convention
 
-import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.DynamicFeatureExtension
+import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureAndroidCompose(
-    commonExtension: CommonExtension<*, *, *, *, *, *>
+    commonExtension: ApplicationExtension
 ) {
-    val localLibs = libs
     commonExtension.run {
         buildFeatures {
             compose = true
         }
         composeOptions {
-            kotlinCompilerExtensionVersion = localLibs.findVersion("composeCompiler").get().toString()
+            kotlinCompilerExtensionVersion = libs.findVersion("composeCompiler").get().toString()
         }
         dependencies {
-            val bom = localLibs.findLibrary("androidx.compose.bom").get()
+            val bom = libs.findLibrary("androidx.compose.bom").get()
             "implementation"(platform(bom))
             "androidTestImplementation"(platform(bom))
-            "debugImplementation"(localLibs.findLibrary("androidx.compose.ui.tooling.preview").get())
+            "debugImplementation"(libs.findLibrary("androidx.compose.ui.tooling.preview").get())
+        }
+    }
+}
+
+internal fun Project.configureAndroidCompose(
+    commonExtension: LibraryExtension
+) {
+    commonExtension.run {
+        buildFeatures {
+            compose = true
+        }
+        composeOptions {
+            kotlinCompilerExtensionVersion = libs.findVersion("composeCompiler").get().toString()
+        }
+        dependencies {
+            val bom = libs.findLibrary("androidx.compose.bom").get()
+            "implementation"(platform(bom))
+            "androidTestImplementation"(platform(bom))
+            "debugImplementation"(libs.findLibrary("androidx.compose.ui.tooling.preview").get())
+        }
+    }
+}
+
+internal fun Project.configureAndroidCompose(
+    commonExtension: DynamicFeatureExtension
+) {
+    commonExtension.run {
+        buildFeatures {
+            compose = true
+        }
+        composeOptions {
+            kotlinCompilerExtensionVersion = libs.findVersion("composeCompiler").get().toString()
+        }
+        dependencies {
+            val bom = libs.findLibrary("androidx.compose.bom").get()
+            "implementation"(platform(bom))
+            "androidTestImplementation"(platform(bom))
+            "debugImplementation"(libs.findLibrary("androidx.compose.ui.tooling.preview").get())
         }
     }
 }

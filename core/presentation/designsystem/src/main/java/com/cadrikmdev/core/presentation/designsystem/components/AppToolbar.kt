@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,6 +38,7 @@ import com.cadrikmdev.core.presentation.designsystem.LogoIcon
 import com.cadrikmdev.core.presentation.designsystem.Poppins
 import com.cadrikmdev.core.presentation.designsystem.R
 import com.cadrikmdev.core.presentation.designsystem.BaseBlue
+import com.cadrikmdev.core.presentation.designsystem.MoreVertIcon
 import com.cadrikmdev.core.presentation.designsystem.components.util.DropDownItem
 
 @Composable
@@ -119,7 +118,7 @@ fun BaseToolbar(
                         isDropDownOpen = true
                     }) {
                         Icon(
-                            imageVector = Icons.Default.MoreVert,
+                            imageVector = MoreVertIcon,
                             contentDescription = stringResource(id = R.string.open_menu),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )

@@ -2,12 +2,10 @@ plugins {
     alias(libs.plugins.cadrikmdev.android.application.compose)
 }
 
-
 android {
     namespace = "com.cadrikmdev.bluetoothintercom"
 
     defaultConfig {
-        versionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true

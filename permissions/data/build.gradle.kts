@@ -1,9 +1,14 @@
 plugins {
-    alias(libs.plugins.cadrikmdev.android.library)
+    alias(libs.plugins.androidLibrary)
 }
 
 android {
     namespace = "com.cadrikmdev.permissions.data"
+    compileSdk = 37
+
+    defaultConfig {
+        minSdk = 28
+    }
 }
 
 dependencies {

@@ -10,58 +10,90 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
 internal fun Project.configureBuildTypes(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+    commonExtension: CommonExtension,
     extensionType: ExtensionType
 ) {
-    commonExtension.run {
+    commonExtension.buildFeatures.apply { buildConfig = true }
+    configureBuildTypesCommon(extensionType)
+}
 
-        buildFeatures {
-            buildConfig = true
+private fun Project.configureBuildTypesCommon(
+    extensionType: ExtensionType
+) {
+    val hostname = gradleLocalProperties(rootDir, providers).getProperty("HOSTNAME") ?: ""
+    val speedTestFeatureEnabled =
+        gradleLocalProperties(rootDir, providers).getProperty("FEATURE_SPEED_TEST_ENABLED")
+            ?.toBoolean() ?: false
+    val githubRepoApiUrl =
+        gradleLocalProperties(rootDir, providers).getProperty("GITHUB_API_REPO_URL") ?: ""
+    val githubAccessToken =
+        gradleLocalProperties(rootDir, providers).getProperty("GITHUB_API_TOKEN") ?: ""
+    when (extensionType) {
+        ExtensionType.APPLICATION -> {
+            this@configureBuildTypesCommon.extensions.configure<ApplicationExtension> {
+                buildTypes {
+                    debug {
+                        configureDebugBuildType(
+                            hostname,
+                            speedTestFeatureEnabled,
+                            githubRepoApiUrl,
+                            githubAccessToken
+                        )
+                    }
+                    release {
+                        configureReleaseBuildType(
+                            hostname,
+                            speedTestFeatureEnabled,
+                            githubRepoApiUrl,
+                            githubAccessToken
+                        )
+                    }
+                }
+            }
         }
 
-        when (extensionType) {
-            ExtensionType.APPLICATION -> {
-                extensions.configure<ApplicationExtension> {
-                    buildTypes {
-                        debug {
-                            configureDebugBuildType()
-                        }
-                        release {
-                            configureReleaseBuildType(
-                                commonExtension
-                            )
-                        }
+        ExtensionType.LIBRARY -> {
+            this@configureBuildTypesCommon.extensions.configure<LibraryExtension> {
+                buildTypes {
+                    debug {
+                        configureDebugBuildType(
+                            hostname,
+                            speedTestFeatureEnabled,
+                            githubRepoApiUrl,
+                            githubAccessToken
+                        )
+                    }
+                    release {
+                        configureReleaseBuildType(
+                            hostname,
+                            speedTestFeatureEnabled,
+                            githubRepoApiUrl,
+                            githubAccessToken
+                        )
                     }
                 }
             }
+        }
 
-            ExtensionType.LIBRARY -> {
-                extensions.configure<LibraryExtension> {
-                    buildTypes {
-                        debug {
-                            configureDebugBuildType()
-                        }
-                        release {
-                            configureReleaseBuildType(
-                                commonExtension
-                            )
-                        }
+        ExtensionType.DYNAMIC_FEATURE -> {
+            this@configureBuildTypesCommon.extensions.configure<DynamicFeatureExtension> {
+                buildTypes {
+                    debug {
+                        configureDebugBuildType(
+                            hostname,
+                            speedTestFeatureEnabled,
+                            githubRepoApiUrl,
+                            githubAccessToken
+                        )
                     }
-                }
-            }
-
-            ExtensionType.DYNAMIC_FEATURE -> {
-                extensions.configure<DynamicFeatureExtension> {
-                    buildTypes {
-                        debug {
-                            configureDebugBuildType()
-                        }
-                        release {
-                            configureReleaseBuildType(
-                                commonExtension
-                            )
-                            isMinifyEnabled = false
-                        }
+                    release {
+                        configureReleaseBuildType(
+                            hostname,
+                            speedTestFeatureEnabled,
+                            githubRepoApiUrl,
+                            githubAccessToken
+                        )
+                        isMinifyEnabled = false
                     }
                 }
             }
@@ -69,16 +101,27 @@ internal fun Project.configureBuildTypes(
     }
 }
 
-private fun BuildType.configureDebugBuildType() {
-
+private fun BuildType.configureDebugBuildType(
+    hostname: String,
+    speedTestFeatureEnabled: Boolean,
+    githubRepoApiUrl: String,
+    githubAccessToken: String
+) {
+    buildConfigField("String", "BASE_URL", "\"$hostname\"")
+    buildConfigField("boolean", "FEATURE_SPEED_TEST_ENABLED", "$speedTestFeatureEnabled")
+    buildConfigField("String", "GITHUB_API_REPO_URL", "\"$githubRepoApiUrl\"")
+    buildConfigField("String", "GITHUB_API_TOKEN", "\"$githubAccessToken\"")
 }
 
 private fun BuildType.configureReleaseBuildType(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
+    hostname: String,
+    speedTestFeatureEnabled: Boolean,
+    githubRepoApiUrl: String,
+    githubAccessToken: String
 ) {
+    buildConfigField("String", "BASE_URL", "\"$hostname\"")
+    buildConfigField("boolean", "FEATURE_SPEED_TEST_ENABLED", "$speedTestFeatureEnabled")
+    buildConfigField("String", "GITHUB_API_REPO_URL", "\"$githubRepoApiUrl\"")
+    buildConfigField("String", "GITHUB_API_TOKEN", "\"$githubAccessToken\"")
     isMinifyEnabled = false
-    proguardFiles(
-        commonExtension.getDefaultProguardFile("proguard-android-optimize.txt"),
-        "proguard-rules.pro"
-    )
 }

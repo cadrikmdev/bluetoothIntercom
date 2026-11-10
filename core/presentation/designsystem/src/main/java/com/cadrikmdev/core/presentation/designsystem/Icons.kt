@@ -84,6 +84,10 @@ val LogoutIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.logout)
 
+val MoreVertIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.more_vert)
+
 val PauseIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.pause)

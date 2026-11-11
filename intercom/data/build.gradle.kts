@@ -1,9 +1,11 @@
 plugins {
-    alias(libs.plugins.cadrikmdev.android.library)
+    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
     namespace = "com.cadrikmdev.intercom.data"
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 28
